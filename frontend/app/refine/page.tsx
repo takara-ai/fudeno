@@ -444,9 +444,27 @@ export default function RefinePage() {
                   </h3>
                   <div className="flex flex-col items-center justify-center space-y-6">
                     <div
-                      className="w-64 h-64 bg-white rounded-lg p-4 shadow-lg"
-                      dangerouslySetInnerHTML={{ __html: logo }}
-                    />
+                      className="w-full max-w-[512px] h-auto bg-white rounded-lg p-4 shadow-lg overflow-hidden"
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                        }}
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            logo?.replace(
+                              "<svg",
+                              '<svg width="100%" height="100%" preserveAspectRatio="xMidYMid meet"'
+                            ) || "",
+                        }}
+                      />
+                    </div>
                     <button
                       onClick={() => {
                         const blob = new Blob([logo], {
