@@ -1,0 +1,11 @@
+# Wrangler configuration for Cloudflare Workers
+name = "fudeno"
+
+compatibility_date = "2025-03-15"
+compatibility_flags = ["nodejs_compat", "nodejs_compat_v2"]
+
+# Routes configuration for Next.js
+[build]
+command = "npm run build"
+[build.upload]
+format = "service-worker" 
