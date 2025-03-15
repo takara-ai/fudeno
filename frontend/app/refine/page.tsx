@@ -29,6 +29,7 @@ export default function RefinePage() {
   const [customValue, setCustomValue] = useState("");
   const [customers, setCustomers] = useState("");
   const [fontSuggestions, setFontSuggestions] = useState<string[]>([]);
+  const [primaryColor, setPrimaryColor] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [fontLinks, setFontLinks] = useState<string[]>([]);
 
@@ -91,11 +92,15 @@ export default function RefinePage() {
       }
 
       const data = await response.json();
-      console.log("LLM Response:", data.content);
+      console.log("API Response:", data);
 
-      const fonts = extractFontFamilies(data.content);
-      // Take only the first three fonts
-      setFontSuggestions(fonts.slice(0, 3));
+      // Update fonts and color
+      setFontSuggestions([
+        data.primaryFont,
+        data.secondaryFont,
+        data.accentFont,
+      ]);
+      setPrimaryColor(data.primaryColorHex);
     } catch (error) {
       console.error("Error getting font suggestions:", error);
     } finally {
@@ -276,12 +281,28 @@ export default function RefinePage() {
             </button>
           </form>
 
-          {/* Font Suggestions */}
+          {/* Font and Color Suggestions */}
           {fontSuggestions.length > 0 && (
             <div className="mt-12 space-y-8">
               <h2 className="text-3xl font-bold text-[#C60F7B]">
-                Font Suggestions
+                Brand Design Suggestions
               </h2>
+
+              {/* Color Preview */}
+              <div className="bg-gray-800/30 p-6 rounded-xl border border-[#C60F7B]/20">
+                <h3 className="text-xl font-semibold mb-4">
+                  Primary Brand Color
+                </h3>
+                <div className="flex items-center gap-4">
+                  <div
+                    className="w-16 h-16 rounded-lg shadow-lg"
+                    style={{ backgroundColor: `#${primaryColor}` }}
+                  />
+                  <code className="text-lg">#{primaryColor}</code>
+                </div>
+              </div>
+
+              {/* Font Suggestions */}
               <div className="grid gap-8">
                 {fontSuggestions.map((font, index) => (
                   <div
@@ -290,10 +311,10 @@ export default function RefinePage() {
                   >
                     <h3 className="text-xl font-semibold mb-2">
                       {index === 0
-                        ? "Primary Font"
+                        ? "Primary Font (Headings)"
                         : index === 1
-                        ? "Secondary Font"
-                        : "Accent Font"}
+                        ? "Secondary Font (Body)"
+                        : "Accent Font (Special Elements)"}
                     </h3>
                     <p className="text-gray-400 mb-4">{font}</p>
                     <div
