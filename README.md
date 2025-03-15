@@ -1,1 +1,11 @@
 # fudeno
+
+Required env variables:
+
+```
+ANTHROPIC_API_KEY=
+ANTHROPIC_MODEL=
+ANTHROPIC_MODEL_LOGO=
+MISTRAL_AGENT_MODEL=
+MISTRAL_API_KEY=
+```
