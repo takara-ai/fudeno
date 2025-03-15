@@ -23,3 +23,5 @@ Thumbs.db
 # Build artifacts
 /build
 /dist
+.venv
+finetuning/finetuning/instruct_dataset.jsonl
