@@ -52,6 +52,17 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center bg-gradient-to-br from-gray-900 via-[#2A0A1F] to-black text-white">
+      {/* Logo */}
+      <div className="fixed top-6 left-12 z-50">
+        <Image
+          src="/logo.svg"
+          alt="Fudeno Logo"
+          width={160}
+          height={50}
+          className="hover:scale-105 transition-transform duration-300"
+        />
+      </div>
+
       {/* Hero Section */}
       <div className="flex min-h-[70vh] items-center justify-center w-full">
         <div className="max-w-4xl w-full text-center p-4">

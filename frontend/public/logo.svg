@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Grid Background -->
+  <!-- <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+  </pattern> -->
+  <!-- <rect width="400" height="400" fill="url(#grid)"/> -->
+  <!-- Logo Text -->
+  <text x="300" y="140" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="140" text-anchor="middle" fill="#C60F7B" letter-spacing="2">fudeno</text>
+</svg> 
