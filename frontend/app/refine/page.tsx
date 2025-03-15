@@ -28,8 +28,18 @@ export default function RefinePage() {
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
   const [customValue, setCustomValue] = useState("");
   const [customers, setCustomers] = useState("");
-  const [fontSuggestions, setFontSuggestions] = useState<string[]>([]);
-  const [primaryColor, setPrimaryColor] = useState<string>("");
+  const [fontSuggestions, setFontSuggestions] = useState<{
+    option1: string;
+    option2: string;
+    option3: string;
+  } | null>(null);
+  const [colors, setColors] = useState<{
+    option1: string;
+    option2: string;
+    option3: string;
+  } | null>(null);
+  const [selectedFont, setSelectedFont] = useState<string | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [fontLinks, setFontLinks] = useState<string[]>([]);
 
@@ -94,13 +104,8 @@ export default function RefinePage() {
       const data = await response.json();
       console.log("API Response:", data);
 
-      // Update fonts and color
-      setFontSuggestions([
-        data.primaryFont,
-        data.secondaryFont,
-        data.accentFont,
-      ]);
-      setPrimaryColor(data.primaryColorHex);
+      setFontSuggestions(data.fonts);
+      setColors(data.colors);
     } catch (error) {
       console.error("Error getting font suggestions:", error);
     } finally {
@@ -118,11 +123,11 @@ export default function RefinePage() {
 
   // Update font links when suggestions change
   useEffect(() => {
-    if (fontSuggestions.length > 0) {
-      setFontLinks([generateGoogleFontsLink(fontSuggestions)]);
+    if (fontSuggestions && Object.values(fontSuggestions).length > 0) {
+      setFontLinks([generateGoogleFontsLink(Object.values(fontSuggestions))]);
 
       // Dynamically add font stylesheet
-      fontSuggestions.forEach((font) => {
+      Object.values(fontSuggestions).forEach((font) => {
         const link = document.createElement("link");
         link.href = `https://fonts.googleapis.com/css2?family=${font.replace(
           /\s+/g,
@@ -282,55 +287,105 @@ export default function RefinePage() {
           </form>
 
           {/* Font and Color Suggestions */}
-          {fontSuggestions.length > 0 && (
+          {fontSuggestions && colors && (
             <div className="mt-12 space-y-8">
               <h2 className="text-3xl font-bold text-[#C60F7B]">
-                Brand Design Suggestions
+                Choose Your Brand Style
               </h2>
 
-              {/* Color Preview */}
+              {/* Font Options */}
               <div className="bg-gray-800/30 p-6 rounded-xl border border-[#C60F7B]/20">
-                <h3 className="text-xl font-semibold mb-4">
-                  Primary Brand Color
-                </h3>
-                <div className="flex items-center gap-4">
-                  <div
-                    className="w-16 h-16 rounded-lg shadow-lg"
-                    style={{ backgroundColor: `#${primaryColor}` }}
-                  />
-                  <code className="text-lg">#{primaryColor}</code>
+                <h3 className="text-xl font-semibold mb-4">Font Options</h3>
+                <div className="grid gap-6">
+                  {Object.entries(fontSuggestions).map(([key, font]) => (
+                    <div
+                      key={key}
+                      className={`p-4 rounded-lg border-2 transition-all duration-300 cursor-pointer ${
+                        selectedFont === font
+                          ? "border-[#C60F7B] bg-[#C60F7B]/20"
+                          : "border-gray-700 hover:border-[#C60F7B]/50"
+                      }`}
+                      onClick={() => setSelectedFont(font)}
+                    >
+                      <h4 className="font-medium mb-2">
+                        Option {key.slice(-1)}
+                      </h4>
+                      <p className="text-gray-400 mb-2">{font}</p>
+                      <div
+                        className="text-2xl"
+                        style={{
+                          fontFamily: `'${font}', sans-serif`,
+                          opacity: document.fonts?.check(`12px '${font}'`)
+                            ? 1
+                            : 0.5,
+                        }}
+                      >
+                        {FONT_SHOWCASE_TEXT}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Font Suggestions */}
-              <div className="grid gap-8">
-                {fontSuggestions.map((font, index) => (
-                  <div
-                    key={index}
-                    className="bg-gray-800/30 p-6 rounded-xl border border-[#C60F7B]/20"
-                  >
-                    <h3 className="text-xl font-semibold mb-2">
-                      {index === 0
-                        ? "Primary Font (Headings)"
-                        : index === 1
-                        ? "Secondary Font (Body)"
-                        : "Accent Font (Special Elements)"}
-                    </h3>
-                    <p className="text-gray-400 mb-4">{font}</p>
+              {/* Color Options */}
+              <div className="bg-gray-800/30 p-6 rounded-xl border border-[#C60F7B]/20">
+                <h3 className="text-xl font-semibold mb-4">Color Options</h3>
+                <div className="grid gap-6">
+                  {Object.entries(colors).map(([key, color]) => (
                     <div
-                      className="text-2xl"
+                      key={key}
+                      className={`p-4 rounded-lg border-2 transition-all duration-300 cursor-pointer ${
+                        selectedColor === color
+                          ? "border-[#C60F7B] bg-[#C60F7B]/20"
+                          : "border-gray-700 hover:border-[#C60F7B]/50"
+                      }`}
+                      onClick={() => setSelectedColor(color)}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div
+                          className="w-16 h-16 rounded-lg shadow-lg"
+                          style={{ backgroundColor: `#${color}` }}
+                        />
+                        <div>
+                          <h4 className="font-medium">
+                            Option {key.slice(-1)}
+                          </h4>
+                          <code className="text-sm">#{color}</code>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Selected Combination Preview */}
+              {selectedFont && selectedColor && (
+                <div className="bg-gray-800/30 p-6 rounded-xl border border-[#C60F7B]/20">
+                  <h3 className="text-xl font-semibold mb-4">
+                    Your Brand Preview
+                  </h3>
+                  <div className="space-y-4">
+                    <div
+                      className="text-3xl font-bold"
                       style={{
-                        fontFamily: `'${font}', sans-serif`,
-                        opacity: document.fonts?.check(`12px '${font}'`)
-                          ? 1
-                          : 0.5,
+                        fontFamily: `'${selectedFont}', sans-serif`,
+                        color: `#${selectedColor}`,
+                      }}
+                    >
+                      {companyName || "Your Company Name"}
+                    </div>
+                    <p
+                      className="text-lg"
+                      style={{
+                        fontFamily: `'${selectedFont}', sans-serif`,
+                        color: `#${selectedColor}`,
                       }}
                     >
                       {FONT_SHOWCASE_TEXT}
-                    </div>
+                    </p>
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
             </div>
           )}
         </div>

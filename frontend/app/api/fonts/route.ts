@@ -24,35 +24,57 @@ export async function POST(request: Request) {
       customers,
     });
 
-    const systemPrompt = `You are a brand design expert specializing in typography and color theory. Based on the company profile and values provided, suggest three Google Fonts combinations and a primary brand color that best represent the brand's identity.
+    const systemPrompt = `You are a brand design expert specializing in typography and color theory. Based on the company profile and values provided, suggest three distinct Google Fonts and three distinct color options that could work well for the brand.
 
 IMPORTANT: 
 1. Only suggest fonts that are available on Google Fonts (https://fonts.google.com/)
-2. The color should reflect the brand's personality and values
+2. Each font and color should be a distinct option, not meant to be used together
 3. Return your response in the following JSON format exactly:
 
 {
-  "primaryFont": "Font name for headings",
-  "secondaryFont": "Font name for body text",
-  "accentFont": "Font name for special elements",
-  "primaryColorHex": "6-digit hex code without #"
+  "fonts": {
+    "option1": "Font name for option 1",
+    "option2": "Font name for option 2",
+    "option3": "Font name for option 3"
+  },
+  "colors": {
+    "option1": "6-digit hex code without #",
+    "option2": "6-digit hex code without #",
+    "option3": "6-digit hex code without #"
+  }
 }
 
 Example response:
 {
-  "primaryFont": "Montserrat",
-  "secondaryFont": "Open Sans",
-  "accentFont": "Playfair Display",
-  "primaryColorHex": "2E3192"
+  "fonts": {
+    "option1": "Montserrat",
+    "option2": "Roboto",
+    "option3": "Playfair Display"
+  },
+  "colors": {
+    "option1": "2E3192",
+    "option2": "E6007E",
+    "option3": "00B8B0"
+  }
 }
 
 Guidelines for selection:
-1. Primary Font: Should be bold and distinctive for headings and key UI elements
-2. Secondary Font: Must be highly readable for body text
-3. Accent Font: Can be more decorative but still professional
-4. Primary Color: Should reflect brand values and create appropriate emotional response
-5. All fonts must be from Google Fonts
-6. Color should be provided as a 6-digit hex code without the # symbol`;
+1. Fonts:
+   - Each font should be a distinct style that could work well for the brand
+   - Include a mix of different font categories (serif, sans-serif, display, etc.)
+   - All fonts must be from Google Fonts
+   - Each font should be suitable for both headings and body text
+
+2. Colors:
+   - Each color should be a distinct option that could work as a primary brand color
+   - Colors should be provided as 6-digit hex codes without the # symbol
+   - Each color should be strong enough to work as a standalone brand color
+   - Colors should reflect different aspects of the brand's personality
+
+3. Important:
+   - The fonts and colors are independent options - they are not meant to be used together
+   - The user will choose one font and one color to create their brand identity
+   - Each option should be strong enough to work independently`;
 
     const message = await anthropic.messages.create({
       model: process.env.ANTHROPIC_MODEL,
@@ -62,7 +84,7 @@ Guidelines for selection:
       messages: [
         {
           role: "user",
-          content: `Generate font and color combinations for this company:
+          content: `Generate font and color options for this company:
         Company Name: ${companyName}
         Type: ${productType}
         Profile: ${companyProfile}
@@ -72,7 +94,7 @@ Guidelines for selection:
         Remember to:
         1. ONLY suggest fonts available on Google Fonts
         2. Return response in the exact JSON format specified
-        3. Choose a color that reflects the brand personality`,
+        3. Provide distinct options that can work independently`,
         },
       ],
     });
