@@ -55,7 +55,7 @@ Guidelines for selection:
 6. Color should be provided as a 6-digit hex code without the # symbol`;
 
     const message = await anthropic.messages.create({
-      model: "claude-3-7-sonnet-20250219",
+      model: process.env.ANTHROPIC_MODEL,
       max_tokens: 1000,
       temperature: 0.7,
       system: systemPrompt,
