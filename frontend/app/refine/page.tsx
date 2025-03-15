@@ -90,7 +90,7 @@ export default function RefinePage() {
               strokeLinejoin="round"
               className="transition-transform group-hover:translate-x-1"
             >
-              <path d="M5 12h14m-6-6 6 6-6 6"/>
+              <path d="M5 12h14m-6-6 6 6-6 6" />
             </svg>
           </button>
         </div>
@@ -159,7 +159,7 @@ export default function RefinePage() {
               strokeLinejoin="round"
               className="transition-transform group-hover:translate-x-1"
             >
-              <path d="M5 12h14m-6-6 6 6-6 6"/>
+              <path d="M5 12h14m-6-6 6 6-6 6" />
             </svg>
           </button>
           <button
@@ -175,8 +175,11 @@ export default function RefinePage() {
       id: 4,
       title: "What are your product values? (Select up to 5)",
       component: ({ value, onChange, onNext, onBack }) => {
-        const allValues = [...PRODUCT_VALUES, ...value.filter(v => !PRODUCT_VALUES.includes(v))];
-        
+        const allValues = [
+          ...PRODUCT_VALUES,
+          ...value.filter((v) => !PRODUCT_VALUES.includes(v)),
+        ];
+
         return (
           <div className="space-y-6">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -203,7 +206,7 @@ export default function RefinePage() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        onChange(value.filter(v => v !== val));
+                        onChange(value.filter((v) => v !== val));
                       }}
                       className="absolute -top-2 -right-2 w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center text-gray-600 hover:text-gray-800 transition-all duration-300 opacity-0 group-hover:opacity-100"
                     >
@@ -224,12 +227,20 @@ export default function RefinePage() {
               <button
                 type="button"
                 onClick={() => {
-                  if (customValue && !allValues.includes(customValue) && value.length < 5) {
+                  if (
+                    customValue &&
+                    !allValues.includes(customValue) &&
+                    value.length < 5
+                  ) {
                     onChange([...value, customValue]);
                     setCustomValue("");
                   }
                 }}
-                disabled={value.length >= 5 || !customValue || allValues.includes(customValue)}
+                disabled={
+                  value.length >= 5 ||
+                  !customValue ||
+                  allValues.includes(customValue)
+                }
                 className="px-8 py-6 bg-[#C60F7B] rounded-xl text-xl font-semibold text-white hover:bg-[#A00C63] transition-all duration-300 hover:scale-[1.02] hover:shadow-xl shadow-md disabled:opacity-50"
               >
                 Add
@@ -256,7 +267,7 @@ export default function RefinePage() {
                 strokeLinejoin="round"
                 className="transition-transform group-hover:translate-x-1"
               >
-                <path d="M5 12h14m-6-6 6 6-6 6"/>
+                <path d="M5 12h14m-6-6 6 6-6 6" />
               </svg>
             </button>
             <button
@@ -292,7 +303,7 @@ export default function RefinePage() {
               };
 
               try {
-                console.log('Making request to /api/fonts with:', formData);
+                console.log("Making request to /api/fonts with:", formData);
                 const response = await fetch("/api/fonts", {
                   method: "POST",
                   headers: {
@@ -306,7 +317,7 @@ export default function RefinePage() {
                 }
 
                 const data = await response.json();
-                console.log('Received font suggestions:', data);
+                console.log("Received font suggestions:", data);
                 setFontSuggestions(data.fonts);
                 setColors(data.colors);
 
@@ -315,8 +326,8 @@ export default function RefinePage() {
                   selectedFont: data.fonts.option1,
                   selectedColor: data.colors.option1,
                 };
-                
-                console.log('Making request to /api/logo with:', logoData);
+
+                console.log("Making request to /api/logo with:", logoData);
                 const logoResponse = await fetch("/api/logo", {
                   method: "POST",
                   headers: {
@@ -330,7 +341,7 @@ export default function RefinePage() {
                 }
 
                 const logoResult = await logoResponse.json();
-                console.log('Received logo response:', logoResult);
+                console.log("Received logo response:", logoResult);
                 setLogo(logoResult.logo);
                 setShowResults(true);
               } catch (error) {
@@ -344,9 +355,25 @@ export default function RefinePage() {
           >
             {isLoading ? (
               <>
-                <svg className="animate-spin h-6 w-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className="animate-spin h-6 w-6 mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
                 Generating...
               </>
@@ -365,7 +392,7 @@ export default function RefinePage() {
                   strokeLinejoin="round"
                   className="transition-transform group-hover:translate-x-1"
                 >
-                  <path d="M5 12h14m-6-6 6 6-6 6"/>
+                  <path d="M5 12h14m-6-6 6 6-6 6" />
                 </svg>
               </>
             )}
@@ -648,7 +675,7 @@ export default function RefinePage() {
                 onNext: handleNext,
                 onBack: handleBack,
               })}
-              </div>
+            </div>
           ) : (
             <BrandResults
               companyName={companyName}
