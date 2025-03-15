@@ -111,6 +111,8 @@ Guidelines for selection:
     try {
       const jsonResponse = JSON.parse(responseText);
       console.log("Parsed JSON Response:", jsonResponse);
+
+      // Return the font and color suggestions
       return NextResponse.json(jsonResponse);
     } catch (error) {
       console.error("Failed to parse LLM response as JSON:", responseText);

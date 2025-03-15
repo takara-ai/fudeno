@@ -38,10 +38,9 @@ export default function RefinePage() {
     option2: string;
     option3: string;
   } | null>(null);
-  const [selectedFont, setSelectedFont] = useState<string | null>(null);
-  const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [fontLinks, setFontLinks] = useState<string[]>([]);
+  const [logo, setLogo] = useState<string | null>(null);
 
   const handleValueSelection = (value: string) => {
     if (selectedValues.includes(value)) {
@@ -106,8 +105,43 @@ export default function RefinePage() {
 
       setFontSuggestions(data.fonts);
       setColors(data.colors);
+
+      // Automatically generate logo with first options
+      console.log("Generating logo with:", {
+        companyName,
+        productType,
+        companyProfile,
+        productValues: selectedValues,
+        customers,
+        selectedFont: data.fonts.option1,
+        selectedColor: data.colors.option1,
+      });
+
+      const logoResponse = await fetch("/api/logo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          companyName,
+          productType,
+          companyProfile,
+          productValues: selectedValues,
+          customers,
+          selectedFont: data.fonts.option1,
+          selectedColor: data.colors.option1,
+        }),
+      });
+
+      if (!logoResponse.ok) {
+        throw new Error("Failed to generate logo");
+      }
+
+      const logoData = await logoResponse.json();
+      console.log("Logo API Response:", logoData);
+      setLogo(logoData.logo);
     } catch (error) {
-      console.error("Error getting font suggestions:", error);
+      console.error("Error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -286,36 +320,28 @@ export default function RefinePage() {
             </button>
           </form>
 
-          {/* Font and Color Suggestions */}
-          {fontSuggestions && colors && (
+          {/* Brand Assets */}
+          {fontSuggestions && colors && logo && (
             <div className="mt-12 space-y-8">
               <h2 className="text-3xl font-bold text-[#C60F7B]">
-                Choose Your Brand Style
+                Your Brand Assets
               </h2>
 
-              {/* Font Options */}
-              <div className="bg-gray-800/30 p-6 rounded-xl border border-[#C60F7B]/20">
-                <h3 className="text-xl font-semibold mb-4">Font Options</h3>
-                <div className="grid gap-6">
-                  {Object.entries(fontSuggestions).map(([key, font]) => (
-                    <div
-                      key={key}
-                      className={`p-4 rounded-lg border-2 transition-all duration-300 cursor-pointer ${
-                        selectedFont === font
-                          ? "border-[#C60F7B] bg-[#C60F7B]/20"
-                          : "border-gray-700 hover:border-[#C60F7B]/50"
-                      }`}
-                      onClick={() => setSelectedFont(font)}
-                    >
-                      <h4 className="font-medium mb-2">
-                        Option {key.slice(-1)}
-                      </h4>
-                      <p className="text-gray-400 mb-2">{font}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Left Column: Font and Color */}
+                <div className="space-y-8">
+                  {/* Font Preview */}
+                  <div className="bg-gray-800/30 p-6 rounded-xl border border-[#C60F7B]/20">
+                    <h3 className="text-xl font-semibold mb-4">Brand Font</h3>
+                    <div className="space-y-4">
+                      <p className="text-gray-400">{fontSuggestions.option1}</p>
                       <div
                         className="text-2xl"
                         style={{
-                          fontFamily: `'${font}', sans-serif`,
-                          opacity: document.fonts?.check(`12px '${font}'`)
+                          fontFamily: `'${fontSuggestions.option1}', sans-serif`,
+                          opacity: document.fonts?.check(
+                            `12px '${fontSuggestions.option1}'`
+                          )
                             ? 1
                             : 0.5,
                         }}
@@ -323,69 +349,79 @@ export default function RefinePage() {
                         {FONT_SHOWCASE_TEXT}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
 
-              {/* Color Options */}
-              <div className="bg-gray-800/30 p-6 rounded-xl border border-[#C60F7B]/20">
-                <h3 className="text-xl font-semibold mb-4">Color Options</h3>
-                <div className="grid gap-6">
-                  {Object.entries(colors).map(([key, color]) => (
-                    <div
-                      key={key}
-                      className={`p-4 rounded-lg border-2 transition-all duration-300 cursor-pointer ${
-                        selectedColor === color
-                          ? "border-[#C60F7B] bg-[#C60F7B]/20"
-                          : "border-gray-700 hover:border-[#C60F7B]/50"
-                      }`}
-                      onClick={() => setSelectedColor(color)}
-                    >
-                      <div className="flex items-center gap-4">
-                        <div
-                          className="w-16 h-16 rounded-lg shadow-lg"
-                          style={{ backgroundColor: `#${color}` }}
-                        />
-                        <div>
-                          <h4 className="font-medium">
-                            Option {key.slice(-1)}
-                          </h4>
-                          <code className="text-sm">#{color}</code>
-                        </div>
+                  {/* Color Preview */}
+                  <div className="bg-gray-800/30 p-6 rounded-xl border border-[#C60F7B]/20">
+                    <h3 className="text-xl font-semibold mb-4">Brand Color</h3>
+                    <div className="flex items-center gap-4">
+                      <div
+                        className="w-16 h-16 rounded-lg shadow-lg"
+                        style={{ backgroundColor: `#${colors.option1}` }}
+                      />
+                      <div>
+                        <code className="text-sm">#{colors.option1}</code>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
 
-              {/* Selected Combination Preview */}
-              {selectedFont && selectedColor && (
-                <div className="bg-gray-800/30 p-6 rounded-xl border border-[#C60F7B]/20">
-                  <h3 className="text-xl font-semibold mb-4">
-                    Your Brand Preview
-                  </h3>
-                  <div className="space-y-4">
-                    <div
-                      className="text-3xl font-bold"
-                      style={{
-                        fontFamily: `'${selectedFont}', sans-serif`,
-                        color: `#${selectedColor}`,
-                      }}
-                    >
-                      {companyName || "Your Company Name"}
+                  {/* Brand Preview */}
+                  <div className="bg-gray-800/30 p-6 rounded-xl border border-[#C60F7B]/20">
+                    <h3 className="text-xl font-semibold mb-4">
+                      Brand Preview
+                    </h3>
+                    <div className="space-y-4">
+                      <div
+                        className="text-3xl font-bold"
+                        style={{
+                          fontFamily: `'${fontSuggestions.option1}', sans-serif`,
+                          color: `#${colors.option1}`,
+                        }}
+                      >
+                        {companyName || "Your Company Name"}
+                      </div>
+                      <p
+                        className="text-lg"
+                        style={{
+                          fontFamily: `'${fontSuggestions.option1}', sans-serif`,
+                          color: `#${colors.option1}`,
+                        }}
+                      >
+                        {FONT_SHOWCASE_TEXT}
+                      </p>
                     </div>
-                    <p
-                      className="text-lg"
-                      style={{
-                        fontFamily: `'${selectedFont}', sans-serif`,
-                        color: `#${selectedColor}`,
-                      }}
-                    >
-                      {FONT_SHOWCASE_TEXT}
-                    </p>
                   </div>
                 </div>
-              )}
+
+                {/* Right Column: Logo */}
+                <div className="bg-gray-800/30 p-6 rounded-xl border border-[#C60F7B]/20">
+                  <h3 className="text-xl font-semibold mb-4">Brand Logo</h3>
+                  <div className="flex flex-col items-center justify-center space-y-6">
+                    <div
+                      className="w-64 h-64 bg-white rounded-lg p-4 shadow-lg"
+                      dangerouslySetInnerHTML={{ __html: logo }}
+                    />
+                    <button
+                      onClick={() => {
+                        const blob = new Blob([logo], {
+                          type: "image/svg+xml",
+                        });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = `${companyName.toLowerCase()}-logo.svg`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                      }}
+                      className="px-6 py-2 bg-[#C60F7B] rounded-lg hover:bg-[#A00C63] transition-all duration-300"
+                    >
+                      Download SVG
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
