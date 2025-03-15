@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-const words = ["App", "SaaS", "NGO"];
+const words = ["startup", "organization", "company", "application"];
 
 const testimonials = [
   {
@@ -51,7 +51,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-gradient-to-br from-gray-900 via-[#2A0A1F] to-black text-white">
+    <main className="flex min-h-screen flex-col items-center bg-white text-black">
       {/* Logo */}
       <div className="fixed top-6 left-12 z-50">
         <Image
@@ -64,35 +64,74 @@ export default function Home() {
       </div>
 
       {/* Hero Section */}
-      <div className="flex min-h-[70vh] items-center justify-center w-full">
-        <div className="max-w-4xl w-full text-center p-4">
-          <h1 className="text-5xl md:text-7xl font-bold mb-8">
-            Style my{" "}
-            <span className="inline-block min-w-[120px] text-[#C60F7B] transition-all duration-500 animate-pulse">
+      <div className="flex min-h-[70vh] items-center justify-between w-full max-w-7xl mx-auto px-4 pt-32">
+        {/* Left side content */}
+        <div className="w-1/2 text-left">
+          <h1 className="text-6xl md:text-[5.5rem] font-bold mb-8 tracking-tight">
+            Create a brand for your
+            <br />
+            
+            <span className="inline-block min-w-[400px] text-indigo-600 transition-all duration-500">
               {words[currentWord]}
             </span>
           </h1>
+          <p className="text-gray-600 text-xl md:text-2xl mt-6 mb-12">
+            Get a complete brand kit with logos, colors, and templates.
+            <br />
+            Ready-to-use files for web, print, and social media.
+          </p>
 
-          <button
-            onClick={() => router.push("/refine")}
-            className="mt-8 px-8 py-4 bg-[#C60F7B] hover:bg-[#A00C63] text-white rounded-lg text-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-[0_0_30px_rgba(198,15,123,0.3)]"
-          >
-            Create your brand
-          </button>
+          <div className="flex">
+            <button
+              onClick={() => router.push("/join")}
+              className="px-12 py-6 bg-[#C60F7B] text-white rounded-xl text-xl font-semibold transition-all duration-300 hover:bg-[#A00C63] hover:scale-105 hover:shadow-xl shadow-md flex items-center gap-3"
+            >
+              Create your brand
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="transition-transform group-hover:translate-x-1"
+              >
+                <path d="M5 12h14m-6-6 6 6-6 6"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Right side - Brand Examples */}
+        <div className="w-1/2 pl-8">
+          <div className="relative w-full h-[600px] rounded-2xl overflow-hidden shadow-xl">
+            <Image
+              src="/imageland.png"
+              alt="Brand Examples"
+              fill
+              priority
+              className="object-cover"
+            />
+          </div>
         </div>
       </div>
 
       {/* Companies Section */}
-      <section className="w-full py-16 px-4 border-t border-[#C60F7B]/10">
+      <section className="w-full py-32 px-4 bg-gray-50 mt-32">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl text-center text-[#C60F7B]/80 mb-12 font-semibold">
-            Trusted by innovative companies
+          <h2 className="text-2xl md:text-3xl font-semibold text-center mb-16">
+            Trusted by innovative teams worldwide
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-center justify-items-center opacity-70">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-12 items-center justify-items-center">
             {companies.map((company, index) => (
-              <div key={index} className="flex items-center justify-center">
-                <div className="w-24 h-24 bg-gray-800/50 rounded-lg flex items-center justify-center border border-[#C60F7B]/20 hover:border-[#C60F7B]/40 transition-all duration-300">
-                  <span className="text-sm text-gray-400">{company.name}</span>
+              <div key={index} className="flex items-center justify-center w-full">
+                <div className="w-full aspect-square bg-white rounded-2xl flex items-center justify-center border border-gray-100 hover:border-gray-200 transition-all duration-300 hover:shadow-lg p-6 group">
+                  <span className="text-base font-medium text-gray-600 group-hover:text-gray-800 transition-colors">
+                    {company.name}
+                  </span>
                 </div>
               </div>
             ))}
@@ -101,7 +140,7 @@ export default function Home() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="w-full py-20 px-4 border-t border-[#C60F7B]/10">
+      <section className="w-full py-20 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
             What our users say
@@ -110,20 +149,18 @@ export default function Home() {
             {testimonials.map((testimonial, index) => (
               <div
                 key={index}
-                className="bg-gray-800/30 p-8 rounded-2xl backdrop-blur-sm hover:transform hover:scale-105 transition-all duration-300 border border-[#C60F7B]/10 hover:border-[#C60F7B]/30 hover:shadow-[0_0_30px_rgba(198,15,123,0.1)]"
+                className="bg-white p-8 rounded-2xl transition-all duration-300 border border-gray-100 hover:border-gray-200 hover:shadow-lg"
               >
                 <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 bg-[#C60F7B]/20 rounded-full mr-4 border border-[#C60F7B]/20"></div>
+                  <div className="w-12 h-12 bg-gray-100 rounded-full mr-4"></div>
                   <div>
                     <h3 className="font-semibold text-lg">
                       {testimonial.author}
                     </h3>
-                    <p className="text-[#C60F7B]/70 text-sm">
-                      {testimonial.role}
-                    </p>
+                    <p className="text-gray-600 text-sm">{testimonial.role}</p>
                   </div>
                 </div>
-                <p className="text-gray-300 italic">"{testimonial.quote}"</p>
+                <p className="text-gray-700">{testimonial.quote}</p>
               </div>
             ))}
           </div>
