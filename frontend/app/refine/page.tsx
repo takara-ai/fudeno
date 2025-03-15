@@ -648,7 +648,7 @@ export default function RefinePage() {
                 onNext: handleNext,
                 onBack: handleBack,
               })}
-            </div>
+              </div>
           ) : (
             <BrandResults
               companyName={companyName}

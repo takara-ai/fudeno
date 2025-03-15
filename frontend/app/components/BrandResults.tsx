@@ -4,7 +4,7 @@ const FONT_SHOWCASE_TEXT = "The quick brown fox jumps over the lazy dog";
 import { ColorPaletteGenerator } from "./ColorPaletteGenerator";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import { FiDownload, FiRefreshCw, FiCopy, FiMove, FiRotateCw, FiType, FiZoomIn, FiZoomOut } from "react-icons/fi";
+import { FiDownload, FiRefreshCw, FiCopy } from "react-icons/fi";
 
 interface BrandResultsProps {
   companyName: string;
@@ -35,11 +35,6 @@ export const BrandResults = ({
   const [selectedColor, setSelectedColor] = useState<string>("option1");
   const [copied, setCopied] = useState<string | null>(null);
   const [currentLogo, setCurrentLogo] = useState(logo);
-  const [textScale, setTextScale] = useState(1);
-  const [textRotation, setTextRotation] = useState(0);
-  const [textPosition, setTextPosition] = useState({ x: 0, y: 0 }); // We'll set this dynamically
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedText, setEditedText] = useState(companyName);
 
   useEffect(() => {
     if (!logo) return;
@@ -56,9 +51,14 @@ export const BrandResults = ({
         return;
       }
       
-      // Set SVG attributes for proper display
-      svgElement.setAttribute('width', '100%');
-      svgElement.setAttribute('height', '100%');
+      // Set fixed dimensions for the SVG
+      svgElement.setAttribute('width', '500');
+      svgElement.setAttribute('height', '500');
+      svgElement.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+      
+      // Ensure viewBox exists
+      const viewBox = svgElement.getAttribute('viewBox') || '0 0 512 512';
+      svgElement.setAttribute('viewBox', viewBox);
       
       // Find all text elements and update them
       const textElements = svgElement.querySelectorAll('text');
@@ -71,66 +71,6 @@ export const BrandResults = ({
           // Set text alignment
           text.setAttribute('text-anchor', 'middle');
           text.setAttribute('dominant-baseline', 'central');
-          
-          // Set position if needed
-          if (textPosition.x !== 0 || textPosition.y !== 0) {
-            text.setAttribute('x', textPosition.x.toString());
-            text.setAttribute('y', textPosition.y.toString());
-            
-            // Apply transformations
-            if (textRotation !== 0 || textScale !== 1) {
-              text.setAttribute('transform', `rotate(${textRotation} ${textPosition.x} ${textPosition.y}) scale(${textScale})`);
-            }
-          }
-          
-          // Handle long text with wrapping
-          const displayText = isEditing ? editedText + '|' : (editedText !== companyName ? editedText : text.textContent);
-          if (displayText) {
-            // Clear existing text content and tspans
-            while (text.firstChild) {
-              text.removeChild(text.firstChild);
-            }
-            
-            // For longer text, split into multiple lines
-            if (displayText.length > 15) {
-              // Calculate how many characters per line based on text length
-              const charsPerLine = displayText.length > 30 ? 15 : 20;
-              const words = displayText.split(' ');
-              let lines = [];
-              let currentLine = '';
-              
-              // Create lines of appropriate length
-              words.forEach(word => {
-                if ((currentLine + word).length <= charsPerLine) {
-                  currentLine += (currentLine ? ' ' : '') + word;
-                } else {
-                  lines.push(currentLine);
-                  currentLine = word;
-                }
-              });
-              if (currentLine) lines.push(currentLine);
-              
-              // Add each line as a tspan
-              lines.forEach((line, index) => {
-                const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-                tspan.textContent = line;
-                tspan.setAttribute('x', textPosition.x.toString());
-                tspan.setAttribute('dy', index === 0 ? '0' : '1.2em');
-                text.appendChild(tspan);
-              });
-              
-              // If editing, add cursor to last line
-              if (isEditing) {
-                const lastTspan = text.lastChild as SVGTSpanElement;
-                if (lastTspan) {
-                  lastTspan.textContent = lastTspan.textContent?.replace('|', '') + '|';
-                }
-              }
-            } else {
-              // For shorter text, just set the content directly
-              text.textContent = displayText;
-            }
-          }
         });
       }
       
@@ -154,24 +94,7 @@ export const BrandResults = ({
       console.error('Error updating SVG:', error);
       setCurrentLogo(logo);
     }
-  }, [logo, selectedFont, selectedColor, textPosition, textRotation, textScale, isEditing, editedText, companyName, colors, fontSuggestions]);
-
-  // Update movement handlers for better control
-  const handleMove = (dx: number, dy: number) => {
-    setTextPosition(prev => {
-      // Simple boundary check
-      const newX = Math.max(50, Math.min(450, prev.x + dx));
-      const newY = Math.max(50, Math.min(450, prev.y + dy));
-      return { x: newX, y: newY };
-    });
-  };
-
-  // Initialize text position if not set
-  useEffect(() => {
-    if (textPosition.x === 0 && textPosition.y === 0) {
-      setTextPosition({ x: 256, y: 256 });
-    }
-  }, [textPosition]);
+  }, [logo, selectedFont, selectedColor, colors, fontSuggestions]);
 
   const handleCopy = (text: string, type: string) => {
     navigator.clipboard.writeText(text);
@@ -179,15 +102,9 @@ export const BrandResults = ({
     setTimeout(() => setCopied(null), 2000);
   };
 
-  const handleRotate = (angle: number) => {
-    setTextRotation(prev => {
-      const newRotation = (prev + angle) % 360;
-      return newRotation < 0 ? newRotation + 360 : newRotation;
-    });
-  };
-
-  const handleScale = (factor: number) => {
-    setTextScale(prev => Math.max(0.1, Math.min(5, prev * factor)));
+  // Function to create a data URL for the SVG
+  const createSvgDataUrl = (svgContent: string) => {
+    return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgContent)}`;
   };
 
   const container = {
@@ -228,15 +145,15 @@ export const BrandResults = ({
                   Customize your brand identity with the options below
                 </p>
               </div>
-              <button
-                onClick={onRegenerate}
-                disabled={isLoading}
+        <button
+          onClick={onRegenerate}
+          disabled={isLoading}
                 className="px-4 py-2 bg-[#C60F7B] rounded-md text-white hover:bg-[#A00C63] transition-all duration-300 hover:scale-[1.02] hover:shadow-md shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-[13px] font-medium"
-              >
+        >
                 <FiRefreshCw className={`${isLoading ? 'animate-spin' : ''} w-3.5 h-3.5`} />
-                {isLoading ? "Generating..." : "Generate New Options"}
-              </button>
-            </div>
+          {isLoading ? "Generating..." : "Generate New Options"}
+        </button>
+      </div>
           </motion.div>
 
           <div className="grid grid-cols-12 gap-6">
@@ -261,104 +178,20 @@ export const BrandResults = ({
                 <div className="p-6">
                   <div className="flex flex-col items-center justify-center space-y-5">
                     {/* SVG Preview Container */}
-                    <div className="w-full bg-[#fafafa] rounded-lg p-6 border border-gray-100 overflow-hidden group hover:border-[#C60F7B] transition-all duration-300">
-                      {/* Simple SVG Editor Toolbar */}
-                      <div className="flex items-center justify-center gap-1 mb-6">
-                        {/* Movement Controls */}
-                        <button
-                          onClick={() => handleMove(-10, 0)}
-                          className="p-2.5 border border-gray-200 rounded-lg hover:border-[#C60F7B] transition-all"
-                        >
-                          ←
-                        </button>
-                        <button
-                          onClick={() => handleMove(10, 0)}
-                          className="p-2.5 border border-gray-200 rounded-lg hover:border-[#C60F7B] transition-all"
-                        >
-                          →
-                        </button>
-                        <button
-                          onClick={() => handleMove(0, -10)}
-                          className="p-2.5 border border-gray-200 rounded-lg hover:border-[#C60F7B] transition-all"
-                        >
-                          ↑
-                        </button>
-                        <button
-                          onClick={() => handleMove(0, 10)}
-                          className="p-2.5 border border-gray-200 rounded-lg hover:border-[#C60F7B] transition-all"
-                        >
-                          ↓
-                        </button>
-
-                        <div className="w-px h-6 bg-gray-200 mx-1" />
-
-                        {/* Rotation Controls */}
-                        <button
-                          onClick={() => handleRotate(-15)}
-                          className="p-2.5 border border-gray-200 rounded-lg hover:border-[#C60F7B] transition-all"
-                        >
-                          ↺
-                        </button>
-                        <button
-                          onClick={() => handleRotate(15)}
-                          className="p-2.5 border border-gray-200 rounded-lg hover:border-[#C60F7B] transition-all"
-                        >
-                          ↻
-                        </button>
-
-                        <div className="w-px h-6 bg-gray-200 mx-1" />
-
-                        {/* Scale Controls */}
-                        <button
-                          onClick={() => handleScale(0.9)}
-                          className="p-2.5 border border-gray-200 rounded-lg hover:border-[#C60F7B] transition-all"
-                        >
-                          −
-                        </button>
-                        <button
-                          onClick={() => handleScale(1.1)}
-                          className="p-2.5 border border-gray-200 rounded-lg hover:border-[#C60F7B] transition-all"
-                        >
-                          +
-                        </button>
-
-                        <div className="w-px h-6 bg-gray-200 mx-1" />
-
-                        {/* Text Editing */}
-                        <button
-                          onClick={() => setIsEditing(!isEditing)}
-                          className={`p-2.5 border rounded-lg transition-all ${
-                            isEditing ? 'border-[#C60F7B] bg-[#C60F7B] text-white' : 'border-gray-200 hover:border-[#C60F7B]'
-                          }`}
-                        >
-                          T
-                        </button>
-                        {isEditing && (
-                          <div className="relative ml-2 flex-1">
-                            <textarea
-                              value={editedText}
-                              onChange={(e) => setEditedText(e.target.value)}
-                              className="w-full min-w-[200px] px-3 py-1.5 border border-gray-200 rounded-lg focus:border-[#C60F7B] focus:outline-none text-center resize-none"
-                              placeholder="Edit text..."
-                              rows={2}
-                              autoFocus
-                            />
-                            <div className="absolute top-0 left-0 w-full h-full pointer-events-none flex items-center justify-center">
-                              <span className="text-[#C60F7B] animate-pulse text-xs">Click T again to finish editing</span>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
+                    <div className="w-full bg-[#fafafa] rounded-lg p-4 border border-gray-100 overflow-hidden group hover:border-[#C60F7B] transition-all duration-300">
                       {/* SVG Preview */}
-                      <div className="w-full h-[350px] bg-white rounded-lg flex items-center justify-center overflow-hidden">
-                        <div 
-                          dangerouslySetInnerHTML={{
-                            __html: currentLogo || "",
-                          }}
-                          className="w-[300px] h-[300px]"
-                          style={{ maxWidth: '100%', maxHeight: '100%' }}
-                        />
+                      <div className="flex justify-center items-center bg-white rounded-lg" style={{ height: '500px' }}>
+                        {currentLogo && (
+                          <img 
+                            src={createSvgDataUrl(currentLogo)}
+                            alt="Logo Preview"
+                            style={{ 
+                              maxWidth: '500px', 
+                              maxHeight: '500px',
+                              objectFit: 'contain'
+                            }}
+                          />
+                        )}
                       </div>
                     </div>
                     <div className="flex gap-3 w-full">
@@ -494,140 +327,6 @@ export const BrandResults = ({
                     </div>
                   </div>
 
-                  {/* Color Applications */}
-                  <div className="p-6 space-y-6">
-                    <h4 className="text-[13px] font-medium text-gray-900">Color Applications</h4>
-                    <div className="space-y-6">
-                      {/* Buttons */}
-                      {/* <div className="space-y-3">
-                        <h5 className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">Buttons</h5>
-                        <div className="flex flex-wrap gap-3">
-                          <button
-                            className="px-4 py-2 rounded-md text-white text-[13px] font-medium transition-all duration-300 hover:scale-[1.02] hover:shadow-md shadow-sm"
-                            style={{ backgroundColor: `#${colors[selectedColor]}` }}
-                          >
-                            Primary Button
-                          </button>
-                          <button
-                            className="px-4 py-2 rounded-md text-[13px] font-medium border transition-all duration-300 hover:scale-[1.02] hover:shadow-md"
-                            style={{ 
-                              borderColor: `#${colors[selectedColor]}`,
-                              color: `#${colors[selectedColor]}`
-                            }}
-                          >
-                            Secondary Button
-                          </button>
-                          <button
-                            className="px-4 py-2 rounded-md text-[13px] font-medium transition-all duration-300 hover:scale-[1.02]"
-                            style={{ color: `#${colors[selectedColor]}` }}
-                          >
-                            Text Button
-                          </button>
-                        </div>
-                      </div> */}
-
-                      {/* Tags & Badges */}
-                      {/* <div className="space-y-3">
-                        <h5 className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">Tags & Badges</h5>
-                        <div className="flex flex-wrap gap-2">
-                          <span
-                            className="px-2.5 py-1 rounded-full text-white text-[12px] font-medium"
-                            style={{ backgroundColor: `#${colors[selectedColor]}` }}
-                          >
-                            New
-                          </span>
-                          <span
-                            className="px-2.5 py-1 rounded-full text-[12px] font-medium border"
-                            style={{ 
-                              borderColor: `#${colors[selectedColor]}`,
-                              color: `#${colors[selectedColor]}`
-                            }}
-                          >
-                            Tag
-                          </span>
-                          <span
-                            className="px-2.5 py-1 rounded-full text-[12px] font-medium"
-                            style={{ 
-                              backgroundColor: `#${colors[selectedColor]}20`,
-                              color: `#${colors[selectedColor]}`
-                            }}
-                          >
-                            Label
-                          </span>
-                        </div>
-                      </div> */}
-
-                      {/* Interactive Elements */}
-                      {/* <div className="space-y-3">
-                        <h5 className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">Interactive Elements</h5>
-                        <div className="space-y-3">
-                          <div className="flex items-center gap-2">
-                            <div
-                              className="w-4 h-4 rounded border-2 flex items-center justify-center"
-                              style={{ borderColor: `#${colors[selectedColor]}` }}
-                            >
-                              <div
-                                className="w-2 h-2 rounded-sm"
-                                style={{ backgroundColor: `#${colors[selectedColor]}` }}
-                              />
-                            </div>
-                            <label className="text-[13px]">Checkbox example</label>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div
-                              className="w-4 h-4 rounded-full border-2 flex items-center justify-center"
-                              style={{ borderColor: `#${colors[selectedColor]}` }}
-                            >
-                              <div
-                                className="w-2 h-2 rounded-full"
-                                style={{ backgroundColor: `#${colors[selectedColor]}` }}
-                              />
-                            </div>
-                            <label className="text-[13px]">Radio button example</label>
-                          </div>
-                          <div
-                            className="w-12 h-6 rounded-full relative cursor-pointer transition-colors duration-200"
-                            style={{ backgroundColor: `#${colors[selectedColor]}` }}
-                          >
-                            <div className="absolute left-[2px] top-[2px] w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 transform translate-x-6" />
-                          </div>
-                        </div>
-                      </div> */}
-
-                      {/* Cards & Containers */}
-                      {/* <div className="space-y-3">
-                        <h5 className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">Cards & Containers</h5>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div
-                            className="p-4 rounded-lg border-2 transition-all duration-300 hover:shadow-md"
-                            style={{ borderColor: `#${colors[selectedColor]}` }}
-                          >
-                            <div
-                              className="text-[13px] font-medium mb-1"
-                              style={{ color: `#${colors[selectedColor]}` }}
-                            >
-                              Featured Card
-                            </div>
-                            <p className="text-[12px] text-gray-600">
-                              With branded border
-                            </p>
-                          </div>
-                          <div className="p-4 rounded-lg border border-gray-200 transition-all duration-300 hover:shadow-md">
-                            <div
-                              className="text-[13px] font-medium mb-1"
-                              style={{ color: `#${colors[selectedColor]}` }}
-                            >
-                              Regular Card
-                            </div>
-                            <p className="text-[12px] text-gray-600">
-                              With accent text
-                            </p>
-                          </div>
-                        </div>
-                      </div> */}
-                    </div>
-                  </div>
-
                   {/* Color Palette */}
                   <div className="p-6 space-y-6">
                     <h4 className="text-[13px] font-medium text-gray-900">Color Palette</h4>
@@ -639,7 +338,7 @@ export const BrandResults = ({
 
             {/* Right Column: Customization Options */}
             <div className="col-span-4 space-y-6">
-              {/* Font Options */}
+          {/* Font Options */}
               <motion.div 
                 variants={item}
                 className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
@@ -656,30 +355,30 @@ export const BrandResults = ({
                   </div>
                 </div>
                 <div className="p-5">
-                  <div className="space-y-6">
+            <div className="space-y-6">
                     {/* Font Selection */}
                     <div>
                       <h4 className="text-[13px] font-medium text-gray-900 mb-3">Font Options</h4>
                       <div className="space-y-2">
-                        {Object.entries(fontSuggestions).map(([key, font]) => (
-                          <div
-                            key={key}
+              {Object.entries(fontSuggestions).map(([key, font]) => (
+                <div
+                  key={key}
                             onClick={() => setSelectedFont(key)}
                             className={`p-3 rounded-md border cursor-pointer transition-all duration-300 transform hover:scale-[1.01] ${
                               key === selectedFont
                                 ? "border-[#C60F7B] bg-[#C60F7B]/5"
                                 : "border-gray-200 hover:border-[#C60F7B]"
-                            }`}
-                          >
-                            <div className="flex items-center justify-between mb-2">
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
                               <h4 className="text-[13px] font-medium text-gray-900 flex items-center gap-2">
-                                Option {key.slice(-1)}
+                      Option {key.slice(-1)}
                                 {key === selectedFont && (
                                   <span className="text-[11px] text-[#C60F7B]">
                                     (Selected)
-                                  </span>
-                                )}
-                              </h4>
+                        </span>
+                      )}
+                    </h4>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -692,45 +391,45 @@ export const BrandResults = ({
                                   <span className="ml-2 text-[11px] text-[#C60F7B]">Copied!</span>
                                 )}
                               </button>
-                            </div>
+                  </div>
                             <p className="text-[11px] text-gray-500 mb-1.5">{font}</p>
-                            <div
+                  <div
                               className="text-[15px] text-gray-900 transition-all duration-300"
-                              style={{
-                                fontFamily: `'${font}', sans-serif`,
+                    style={{
+                      fontFamily: `'${font}', sans-serif`,
                                 opacity: document.fonts?.check(`12px '${font}'`) ? 1 : 0.5,
-                              }}
-                            >
-                              {FONT_SHOWCASE_TEXT}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    }}
+                  >
+                    {FONT_SHOWCASE_TEXT}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
                     {/* Color Selection */}
                     <div>
                       <h4 className="text-[13px] font-medium text-gray-900 mb-3">Color Options</h4>
                       <div className="space-y-2">
-                        {Object.entries(colors).map(([key, color]) => (
-                          <div
-                            key={key}
+              {Object.entries(colors).map(([key, color]) => (
+                <div
+                  key={key}
                             onClick={() => setSelectedColor(key)}
                             className={`p-3 rounded-md border cursor-pointer transition-all duration-300 transform hover:scale-[1.01] ${
                               key === selectedColor
                                 ? "border-[#C60F7B] bg-[#C60F7B]/5"
                                 : "border-gray-200 hover:border-[#C60F7B]"
-                            }`}
-                          >
-                            <div className="flex items-center justify-between mb-2">
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
                               <h4 className="text-[13px] font-medium text-gray-900 flex items-center gap-2">
-                                Option {key.slice(-1)}
+                      Option {key.slice(-1)}
                                 {key === selectedColor && (
                                   <span className="text-[11px] text-[#C60F7B]">
                                     (Selected)
-                                  </span>
-                                )}
-                              </h4>
+                        </span>
+                      )}
+                    </h4>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -743,12 +442,12 @@ export const BrandResults = ({
                                   <span className="ml-2 text-[11px] text-[#C60F7B]">Copied!</span>
                                 )}
                               </button>
-                            </div>
+                  </div>
                             <div className="flex items-center gap-3">
-                              <div
+                    <div
                                 className="w-14 h-14 rounded-md shadow-sm transition-transform duration-300 hover:scale-105 cursor-pointer"
-                                style={{ backgroundColor: `#${color}` }}
-                              />
+                      style={{ backgroundColor: `#${color}` }}
+                    />
                               <div className="space-y-1">
                                 <code className="text-[13px] font-mono text-gray-600">#{color}</code>
                                 <div className="flex flex-col gap-1">
@@ -759,14 +458,14 @@ export const BrandResults = ({
                                     HSL: {hexToHsl(`#${color}`)}
                                   </div>
                                 </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
                     </div>
                   </div>
                 </div>
+              ))}
+            </div>
+          </div>
+            </div>
+          </div>
               </motion.div>
             </div>
           </div>
