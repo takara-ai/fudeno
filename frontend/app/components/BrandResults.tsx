@@ -338,7 +338,8 @@ export const BrandResults = ({
         parseInt(colors[selectedColor].substring(2, 4), 16),
         parseInt(colors[selectedColor].substring(4, 6), 16)
       );
-      doc.setGState(new doc.GState({ opacity }));
+      doc.saveGraphicsState();
+      doc.setGState(doc.GState({ opacity }));
       doc.rect(
         margin + index * (colorBoxSize + 10),
         yPosition,
@@ -346,8 +347,10 @@ export const BrandResults = ({
         colorBoxSize,
         "F"
       );
+      doc.restoreGraphicsState();
 
-      doc.setGState(new doc.GState({ opacity: 1 }));
+      doc.saveGraphicsState();
+      doc.setGState(doc.GState({ opacity: 1 }));
       doc.setFontSize(10);
       doc.text(
         `${opacity * 100}%`,
