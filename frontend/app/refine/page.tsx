@@ -625,7 +625,7 @@ export default function RefinePage() {
           />
         </div>
 
-        <div className="max-w-4xl w-full mt-32 p-8">
+        <div className="w-full mt-32 px-8">
           {/* Progress bar */}
           <div className="w-full h-1 bg-gray-100 rounded-full mb-12">
             <div
