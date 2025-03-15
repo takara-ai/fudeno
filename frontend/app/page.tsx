@@ -83,7 +83,7 @@ export default function Home() {
 
           <div className="flex">
             <button
-              onClick={() => router.push("/join")}
+              onClick={() => router.push("/refine")}
               className="px-12 py-6 bg-[#C60F7B] text-white rounded-xl text-xl font-semibold transition-all duration-300 hover:bg-[#A00C63] hover:scale-105 hover:shadow-xl shadow-md flex items-center gap-3"
             >
               Create your brand

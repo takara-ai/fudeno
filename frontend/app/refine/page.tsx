@@ -69,15 +69,29 @@ export default function RefinePage() {
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder="e.g., Fudeno"
-            className="w-full bg-gray-800/50 border-2 border-gray-700 rounded-lg p-4 focus:outline-none focus:border-[#C60F7B]"
+            className="w-full bg-white border-2 border-gray-200 rounded-xl p-6 text-xl focus:outline-none focus:border-[#C60F7B] transition-all duration-300"
             required
           />
           <button
             onClick={onNext}
             disabled={!value}
-            className="w-full py-4 bg-[#C60F7B] rounded-lg text-xl font-semibold hover:bg-[#A00C63] transition-all duration-300 disabled:opacity-50"
+            className="w-full py-6 bg-[#C60F7B] rounded-xl text-xl font-semibold text-white hover:bg-[#A00C63] transition-all duration-300 hover:scale-[1.02] hover:shadow-xl shadow-md disabled:opacity-50 flex items-center justify-center gap-3"
           >
             Continue
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="transition-transform group-hover:translate-x-1"
+            >
+              <path d="M5 12h14m-6-6 6 6-6 6"/>
+            </svg>
           </button>
         </div>
       ),
@@ -96,10 +110,10 @@ export default function RefinePage() {
                   onChange(type);
                   onNext();
                 }}
-                className={`p-4 rounded-lg border-2 transition-all duration-300 ${
+                className={`p-6 rounded-xl border-2 transition-all duration-300 text-xl font-medium ${
                   value === type
-                    ? "border-[#C60F7B] bg-[#C60F7B]/20"
-                    : "border-gray-700 hover:border-[#C60F7B]/50"
+                    ? "border-[#C60F7B] bg-[#C60F7B] text-white"
+                    : "border-gray-200 hover:border-[#C60F7B] hover:scale-[1.02] hover:shadow-lg"
                 }`}
               >
                 {type}
@@ -108,7 +122,7 @@ export default function RefinePage() {
           </div>
           <button
             onClick={onBack}
-            className="w-full py-4 border-2 border-gray-700 rounded-lg text-xl font-semibold hover:border-[#C60F7B] transition-all duration-300"
+            className="w-full py-6 border-2 border-gray-200 rounded-xl text-xl font-semibold hover:border-[#C60F7B] transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
           >
             Back
           </button>
@@ -125,14 +139,34 @@ export default function RefinePage() {
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder="e.g., We create innovative solutions for sustainable urban mobility"
-            className="w-full bg-gray-800/50 border-2 border-gray-700 rounded-lg p-4 focus:outline-none focus:border-[#C60F7B]"
+            className="w-full bg-white border-2 border-gray-200 rounded-xl p-6 text-xl focus:outline-none focus:border-[#C60F7B] transition-all duration-300"
           />
           <button
             onClick={onNext}
             disabled={!value}
-            className="w-full py-4 bg-[#C60F7B] rounded-lg text-xl font-semibold hover:bg-[#A00C63] transition-all duration-300 disabled:opacity-50"
+            className="w-full py-6 bg-[#C60F7B] rounded-xl text-xl font-semibold text-white hover:bg-[#A00C63] transition-all duration-300 hover:scale-[1.02] hover:shadow-xl shadow-md disabled:opacity-50 flex items-center justify-center gap-3"
           >
             Continue
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="transition-transform group-hover:translate-x-1"
+            >
+              <path d="M5 12h14m-6-6 6 6-6 6"/>
+            </svg>
+          </button>
+          <button
+            onClick={onBack}
+            className="w-full py-6 border-2 border-gray-200 rounded-xl text-xl font-semibold hover:border-[#C60F7B] transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+          >
+            Back
           </button>
         </div>
       ),
@@ -140,71 +174,100 @@ export default function RefinePage() {
     {
       id: 4,
       title: "What are your product values? (Select up to 5)",
-      component: ({ value, onChange, onNext, onBack }) => (
-        <div className="space-y-6">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {PRODUCT_VALUES.map((val) => (
+      component: ({ value, onChange, onNext, onBack }) => {
+        const allValues = [...PRODUCT_VALUES, ...value.filter(v => !PRODUCT_VALUES.includes(v))];
+        
+        return (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {allValues.map((val) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => {
+                    if (value.includes(val)) {
+                      onChange(value.filter((v) => v !== val));
+                    } else if (value.length < 5) {
+                      onChange([...value, val]);
+                    }
+                  }}
+                  className={`p-6 rounded-xl border-2 transition-all duration-300 text-lg font-medium group ${
+                    value.includes(val)
+                      ? "border-[#C60F7B] bg-[#C60F7B] text-white"
+                      : "border-gray-200 hover:border-[#C60F7B] hover:scale-[1.02] hover:shadow-lg"
+                  } ${!PRODUCT_VALUES.includes(val) ? "relative" : ""}`}
+                  disabled={value.length >= 5 && !value.includes(val)}
+                >
+                  {val}
+                  {!PRODUCT_VALUES.includes(val) && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onChange(value.filter(v => v !== val));
+                      }}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center text-gray-600 hover:text-gray-800 transition-all duration-300 opacity-0 group-hover:opacity-100"
+                    >
+                      ×
+                    </button>
+                  )}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-4">
+              <input
+                type="text"
+                value={customValue}
+                onChange={(e) => setCustomValue(e.target.value)}
+                placeholder="Add custom value"
+                className="flex-1 bg-white border-2 border-gray-200 rounded-xl p-6 text-xl focus:outline-none focus:border-[#C60F7B] transition-all duration-300"
+              />
               <button
-                key={val}
                 type="button"
                 onClick={() => {
-                  if (value.includes(val)) {
-                    onChange(value.filter((v) => v !== val));
-                  } else if (value.length < 5) {
-                    onChange([...value, val]);
+                  if (customValue && !allValues.includes(customValue) && value.length < 5) {
+                    onChange([...value, customValue]);
+                    setCustomValue("");
                   }
                 }}
-                className={`p-3 rounded-lg border-2 transition-all duration-300 ${
-                  value.includes(val)
-                    ? "border-[#C60F7B] bg-[#C60F7B]/20"
-                    : "border-gray-700 hover:border-[#C60F7B]/50"
-                }`}
-                disabled={value.length >= 5 && !value.includes(val)}
+                disabled={value.length >= 5 || !customValue || allValues.includes(customValue)}
+                className="px-8 py-6 bg-[#C60F7B] rounded-xl text-xl font-semibold text-white hover:bg-[#A00C63] transition-all duration-300 hover:scale-[1.02] hover:shadow-xl shadow-md disabled:opacity-50"
               >
-                {val}
+                Add
               </button>
-            ))}
-          </div>
-          <div className="flex gap-3 mt-4">
-            <input
-              type="text"
-              value={customValue}
-              onChange={(e) => setCustomValue(e.target.value)}
-              placeholder="Add custom value"
-              className="flex-1 bg-gray-800/50 border-2 border-gray-700 rounded-lg p-3 focus:outline-none focus:border-[#C60F7B]"
-            />
+            </div>
+            <div className="text-lg text-gray-600 mt-2">
+              Selected: {value.join(", ")}
+            </div>
             <button
-              type="button"
-              onClick={() => {
-                if (customValue && !PRODUCT_VALUES.includes(customValue) && value.length < 5) {
-                  onChange([...value, customValue]);
-                  setCustomValue("");
-                }
-              }}
-              disabled={value.length >= 5 || !customValue}
-              className="px-6 py-3 bg-[#C60F7B] rounded-lg hover:bg-[#A00C63] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+              onClick={onNext}
+              disabled={value.length === 0}
+              className="w-full py-6 bg-[#C60F7B] rounded-xl text-xl font-semibold text-white hover:bg-[#A00C63] transition-all duration-300 hover:scale-[1.02] hover:shadow-xl shadow-md disabled:opacity-50 flex items-center justify-center gap-3"
             >
-              Add
+              Continue
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="transition-transform group-hover:translate-x-1"
+              >
+                <path d="M5 12h14m-6-6 6 6-6 6"/>
+              </svg>
+            </button>
+            <button
+              onClick={onBack}
+              className="w-full py-6 border-2 border-gray-200 rounded-xl text-xl font-semibold hover:border-[#C60F7B] transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+            >
+              Back
             </button>
           </div>
-          <div className="text-sm text-gray-400 mt-2">
-            Selected: {value.join(", ")}
-          </div>
-          <button
-            onClick={onNext}
-            disabled={value.length === 0}
-            className="w-full py-4 bg-[#C60F7B] rounded-lg text-xl font-semibold hover:bg-[#A00C63] transition-all duration-300 disabled:opacity-50"
-          >
-            Continue
-          </button>
-          <button
-            onClick={onBack}
-            className="w-full py-4 border-2 border-gray-700 rounded-lg text-xl font-semibold hover:border-[#C60F7B] transition-all duration-300"
-          >
-            Back
-          </button>
-        </div>
-      ),
+        );
+      },
     },
     {
       id: 5,
@@ -214,7 +277,7 @@ export default function RefinePage() {
           <textarea
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full h-32 bg-gray-800/50 border-2 border-gray-700 rounded-lg p-4 focus:outline-none focus:border-[#C60F7B]"
+            className="w-full h-48 bg-white border-2 border-gray-200 rounded-xl p-6 text-xl focus:outline-none focus:border-[#C60F7B] transition-all duration-300"
             placeholder="Describe your target customers..."
           />
           <button
@@ -227,15 +290,6 @@ export default function RefinePage() {
                 productValues: selectedValues,
                 customers: value,
               };
-
-              // Log the form data before making API calls
-              console.log('Submitting form with data:', {
-                companyName,
-                productType,
-                companyProfile,
-                productValues: selectedValues,
-                customers: value,
-              });
 
               try {
                 console.log('Making request to /api/fonts with:', formData);
@@ -286,13 +340,39 @@ export default function RefinePage() {
               }
             }}
             disabled={!value || isLoading}
-            className="w-full py-4 bg-[#C60F7B] rounded-lg text-xl font-semibold hover:bg-[#A00C63] transition-all duration-300 disabled:opacity-50"
+            className="w-full py-6 bg-[#C60F7B] rounded-xl text-xl font-semibold text-white hover:bg-[#A00C63] transition-all duration-300 hover:scale-[1.02] hover:shadow-xl shadow-md disabled:opacity-50 flex items-center justify-center gap-3"
           >
-            {isLoading ? "Generating..." : "Generate Branding"}
+            {isLoading ? (
+              <>
+                <svg className="animate-spin h-6 w-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Generating...
+              </>
+            ) : (
+              <>
+                Generate Branding
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="transition-transform group-hover:translate-x-1"
+                >
+                  <path d="M5 12h14m-6-6 6 6-6 6"/>
+                </svg>
+              </>
+            )}
           </button>
           <button
             onClick={onBack}
-            className="w-full py-4 border-2 border-gray-700 rounded-lg text-xl font-semibold hover:border-[#C60F7B] transition-all duration-300"
+            className="w-full py-6 border-2 border-gray-200 rounded-xl text-xl font-semibold hover:border-[#C60F7B] transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
           >
             Back
           </button>
@@ -533,7 +613,7 @@ export default function RefinePage() {
           <link key={index} rel="stylesheet" href={link} />
         ))}
       </Head>
-      <main className="flex min-h-screen flex-col items-center bg-gradient-to-br from-gray-900 via-[#2A0A1F] to-black text-white">
+      <main className="flex min-h-screen flex-col items-center bg-white text-black">
         {/* Logo */}
         <div className="fixed top-6 left-12 z-50">
           <Image
@@ -545,9 +625,9 @@ export default function RefinePage() {
           />
         </div>
 
-        <div className="max-w-2xl w-full mt-32 p-8">
+        <div className="max-w-4xl w-full mt-32 p-8">
           {/* Progress bar */}
-          <div className="w-full h-1 bg-gray-800 rounded-full mb-12">
+          <div className="w-full h-1 bg-gray-100 rounded-full mb-12">
             <div
               className="h-full bg-[#C60F7B] rounded-full transition-all duration-500"
               style={{
@@ -558,7 +638,7 @@ export default function RefinePage() {
 
           {!showResults ? (
             <div className="space-y-8">
-              <h2 className="text-3xl font-bold mb-8 transition-all duration-300">
+              <h2 className="text-4xl font-bold mb-8 transition-all duration-300 text-gray-900">
                 {questions[currentStep].title}
               </h2>
 

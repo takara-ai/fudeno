@@ -2,6 +2,9 @@
 const FONT_SHOWCASE_TEXT = "The quick brown fox jumps over the lazy dog";
 
 import { ColorPaletteGenerator } from "./ColorPaletteGenerator";
+import { motion } from "framer-motion";
+import { useState } from "react";
+import { FiDownload, FiRefreshCw, FiCopy } from "react-icons/fi";
 
 interface BrandResultsProps {
   companyName: string;
@@ -28,53 +31,103 @@ export const BrandResults = ({
   onRegenerate,
   isLoading,
 }: BrandResultsProps) => {
+  const [selectedFont, setSelectedFont] = useState<string>("option1");
+  const [selectedColor, setSelectedColor] = useState<string>("option1");
+  const [copied, setCopied] = useState<string | null>(null);
+
+  const handleCopy = (text: string, type: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(type);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-bold text-[#C60F7B]">Your Brand Assets</h2>
+    <motion.div 
+      className="space-y-8"
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div 
+        className="flex justify-between items-center"
+        variants={item}
+      >
+        <h2 className="text-4xl font-bold text-gray-900">
+          Your Brand Assets
+        </h2>
         <button
           onClick={onRegenerate}
           disabled={isLoading}
-          className="px-6 py-2 bg-[#C60F7B] rounded-lg hover:bg-[#A00C63] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-6 py-3 bg-[#C60F7B] rounded-xl text-white hover:bg-[#A00C63] transition-all duration-300 hover:scale-[1.02] hover:shadow-xl shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 group"
         >
+          <FiRefreshCw className={`${isLoading ? 'animate-spin' : ''} group-hover:rotate-180 transition-transform duration-500`} />
           {isLoading ? "Generating..." : "Generate New Options"}
         </button>
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left Column: Font and Color */}
         <div className="space-y-8">
           {/* Font Options */}
-          <div className="bg-gray-800/30 p-6 rounded-xl border border-[#C60F7B]/20">
-            <h3 className="text-xl font-semibold mb-4">Font Options</h3>
+          <motion.div 
+            variants={item}
+            className="bg-white p-6 rounded-xl border border-gray-200 hover:border-[#C60F7B] transition-all duration-300 hover:shadow-lg"
+          >
+            <h3 className="text-xl font-semibold mb-4 text-gray-900">Font Options</h3>
             <div className="space-y-6">
               {Object.entries(fontSuggestions).map(([key, font]) => (
                 <div
                   key={key}
-                  className={`p-4 rounded-lg border-2 ${
-                    key === "option1"
-                      ? "border-[#C60F7B] bg-[#C60F7B]/20"
-                      : "border-gray-700"
+                  onClick={() => setSelectedFont(key)}
+                  className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 transform hover:scale-[1.02] ${
+                    key === selectedFont
+                      ? "border-[#C60F7B] bg-[#C60F7B]/5"
+                      : "border-gray-200 hover:border-[#C60F7B]"
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium">
+                    <h4 className="font-medium text-gray-900 flex items-center gap-2">
                       Option {key.slice(-1)}
-                      {key === "option1" && (
-                        <span className="ml-2 text-sm text-[#C60F7B]">
-                          (Used in Logo)
+                      {key === selectedFont && (
+                        <span className="text-sm text-[#C60F7B]">
+                          (Selected)
                         </span>
                       )}
                     </h4>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCopy(font, `font-${key}`);
+                      }}
+                      className="text-gray-400 hover:text-[#C60F7B] transition-colors"
+                    >
+                      <FiCopy />
+                      {copied === `font-${key}` && (
+                        <span className="ml-2 text-xs text-[#C60F7B]">Copied!</span>
+                      )}
+                    </button>
                   </div>
-                  <p className="text-gray-400 mb-2">{font}</p>
+                  <p className="text-gray-600 mb-2">{font}</p>
                   <div
-                    className="text-2xl"
+                    className="text-2xl text-gray-900 transition-all duration-300"
                     style={{
                       fontFamily: `'${font}', sans-serif`,
-                      opacity: document.fonts?.check(`12px '${font}'`)
-                        ? 1
-                        : 0.5,
+                      opacity: document.fonts?.check(`12px '${font}'`) ? 1 : 0.5,
                     }}
                   >
                     {FONT_SHOWCASE_TEXT}
@@ -82,84 +135,104 @@ export const BrandResults = ({
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Color Options */}
-          <div className="bg-gray-800/30 p-6 rounded-xl border border-[#C60F7B]/20">
-            <h3 className="text-xl font-semibold mb-4">Color Options</h3>
+          <motion.div 
+            variants={item}
+            className="bg-white p-6 rounded-xl border border-gray-200 hover:border-[#C60F7B] transition-all duration-300 hover:shadow-lg"
+          >
+            <h3 className="text-xl font-semibold mb-4 text-gray-900">Color Options</h3>
             <div className="space-y-6">
               {Object.entries(colors).map(([key, color]) => (
                 <div
                   key={key}
-                  className={`p-4 rounded-lg border-2 ${
-                    key === "option1"
-                      ? "border-[#C60F7B] bg-[#C60F7B]/20"
-                      : "border-gray-700"
+                  onClick={() => setSelectedColor(key)}
+                  className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 transform hover:scale-[1.02] ${
+                    key === selectedColor
+                      ? "border-[#C60F7B] bg-[#C60F7B]/5"
+                      : "border-gray-200 hover:border-[#C60F7B]"
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium">
+                    <h4 className="font-medium text-gray-900 flex items-center gap-2">
                       Option {key.slice(-1)}
-                      {key === "option1" && (
-                        <span className="ml-2 text-sm text-[#C60F7B]">
-                          (Used in Logo)
+                      {key === selectedColor && (
+                        <span className="text-sm text-[#C60F7B]">
+                          (Selected)
                         </span>
                       )}
                     </h4>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCopy(`#${color}`, `color-${key}`);
+                      }}
+                      className="text-gray-400 hover:text-[#C60F7B] transition-colors"
+                    >
+                      <FiCopy />
+                      {copied === `color-${key}` && (
+                        <span className="ml-2 text-xs text-[#C60F7B]">Copied!</span>
+                      )}
+                    </button>
                   </div>
                   <div className="flex items-center gap-4">
                     <div
-                      className="w-16 h-16 rounded-lg shadow-lg"
+                      className="w-16 h-16 rounded-xl shadow-lg transition-transform duration-300 hover:scale-110 cursor-pointer"
                       style={{ backgroundColor: `#${color}` }}
                     />
                     <div>
-                      <code className="text-sm">#{color}</code>
+                      <code className="text-sm text-gray-600">#{color}</code>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Brand Preview */}
-          <div className="bg-gray-800/30 p-6 rounded-xl border border-[#C60F7B]/20">
-            <h3 className="text-xl font-semibold mb-4">
-              Brand Preview (Using Option 1)
-            </h3>
+          <motion.div 
+            variants={item}
+            className="bg-white p-6 rounded-xl border border-gray-200 hover:border-[#C60F7B] transition-all duration-300 hover:shadow-lg"
+          >
+            <h3 className="text-xl font-semibold mb-4 text-gray-900">Brand Preview</h3>
             <div className="space-y-4">
               <div
-                className="text-3xl font-bold"
+                className="text-3xl font-bold transition-all duration-300"
                 style={{
-                  fontFamily: `'${fontSuggestions.option1}', sans-serif`,
-                  color: `#${colors.option1}`,
+                  fontFamily: `'${fontSuggestions[selectedFont]}', sans-serif`,
+                  color: `#${colors[selectedColor]}`,
                 }}
               >
                 {companyName || "Your Company Name"}
               </div>
               <p
-                className="text-lg"
+                className="text-lg transition-all duration-300"
                 style={{
-                  fontFamily: `'${fontSuggestions.option1}', sans-serif`,
-                  color: `#${colors.option1}`,
+                  fontFamily: `'${fontSuggestions[selectedFont]}', sans-serif`,
+                  color: `#${colors[selectedColor]}`,
                 }}
               >
                 {FONT_SHOWCASE_TEXT}
               </p>
             </div>
-          </div>
+          </motion.div>
 
           {/* Color Palette Generator */}
-          <ColorPaletteGenerator primaryColor={`#${colors.option1}`} />
+          <motion.div variants={item}>
+            <ColorPaletteGenerator primaryColor={`#${colors[selectedColor]}`} />
+          </motion.div>
         </div>
 
         {/* Right Column: Logo */}
-        <div className="bg-gray-800/30 p-6 rounded-xl border border-[#C60F7B]/20">
-          <h3 className="text-xl font-semibold mb-4">
-            Brand Logo (Using Option 1)
-          </h3>
+        <motion.div 
+          variants={item}
+          className="bg-white p-6 rounded-xl border border-gray-200 hover:border-[#C60F7B] transition-all duration-300 hover:shadow-lg"
+        >
+          <h3 className="text-xl font-semibold mb-4 text-gray-900">Brand Logo</h3>
           <div className="flex flex-col items-center justify-center space-y-6">
             <div
-              className="w-full max-w-[512px] h-auto bg-white rounded-lg p-4 shadow-lg overflow-hidden"
+              className="w-full max-w-[512px] h-auto bg-gray-50 rounded-xl p-8 shadow-lg overflow-hidden group hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]"
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -194,13 +267,14 @@ export const BrandResults = ({
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
               }}
-              className="px-6 py-2 bg-[#C60F7B] rounded-lg hover:bg-[#A00C63] transition-all duration-300"
+              className="px-6 py-3 bg-[#C60F7B] rounded-xl text-white hover:bg-[#A00C63] transition-all duration-300 hover:scale-[1.02] hover:shadow-xl shadow-md flex items-center gap-2 group"
             >
+              <FiDownload className="group-hover:translate-y-1 transition-transform duration-300" />
               Download SVG
             </button>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
