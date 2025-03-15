@@ -79,7 +79,7 @@ Guidelines for selection:
     const message = await anthropic.messages.create({
       model: process.env.ANTHROPIC_MODEL,
       max_tokens: 1000,
-      temperature: 0.7,
+      temperature: 1.2,
       system: systemPrompt,
       messages: [
         {
