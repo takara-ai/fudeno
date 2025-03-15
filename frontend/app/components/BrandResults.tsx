@@ -1,6 +1,8 @@
 // Example text to showcase fonts
 const FONT_SHOWCASE_TEXT = "The quick brown fox jumps over the lazy dog";
 
+import { ColorPaletteGenerator } from "./ColorPaletteGenerator";
+
 interface BrandResultsProps {
   companyName: string;
   fontSuggestions: {
@@ -145,6 +147,9 @@ export const BrandResults = ({
               </p>
             </div>
           </div>
+
+          {/* Color Palette Generator */}
+          <ColorPaletteGenerator primaryColor={`#${colors.option1}`} />
         </div>
 
         {/* Right Column: Logo */}
