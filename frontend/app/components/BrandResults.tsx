@@ -668,10 +668,10 @@ export function BrandResults({
                   </div>
                   <div>
                     <h3 className="text-[15px] font-medium text-gray-900">
-                      Mistral Logo
+                      Logo Design
                     </h3>
                     <p className="text-[13px] text-gray-500">
-                      Preview and download your Mistral logo
+                      Preview and download your logo design
                     </p>
                   </div>
                 </div>
@@ -779,10 +779,10 @@ export function BrandResults({
                   </div>
                   <div>
                     <h3 className="text-[15px] font-medium text-gray-900">
-                      Anthropic Logo
+                      Logo Text Design
                     </h3>
                     <p className="text-[13px] text-gray-500">
-                      Preview and download your Anthropic logo
+                      Preview and download your logo text design
                     </p>
                   </div>
                 </div>

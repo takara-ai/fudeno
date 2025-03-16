@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FiCopy } from 'react-icons/fi';
+import { FiCopy } from "react-icons/fi";
 
 interface ColorPaletteGeneratorProps {
   primaryColor: string;
@@ -104,22 +104,30 @@ export const ColorPaletteGenerator = ({
   const hexToHSL = (hex: string): { h: number; s: number; l: number } => {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     if (!result) return { h: 0, s: 0, l: 0 };
-    
+
     let r = parseInt(result[1], 16) / 255;
     let g = parseInt(result[2], 16) / 255;
     let b = parseInt(result[3], 16) / 255;
 
     const max = Math.max(r, g, b);
     const min = Math.min(r, g, b);
-    let h = 0, s, l = (max + min) / 2;
+    let h = 0,
+      s,
+      l = (max + min) / 2;
 
     if (max !== min) {
       const d = max - min;
       s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
       switch (max) {
-        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-        case g: h = (b - r) / d + 2; break;
-        case b: h = (r - g) / d + 4; break;
+        case r:
+          h = (g - b) / d + (g < b ? 6 : 0);
+          break;
+        case g:
+          h = (b - r) / d + 2;
+          break;
+        case b:
+          h = (r - g) / d + 4;
+          break;
       }
       h /= 6;
     } else {
@@ -137,12 +145,12 @@ export const ColorPaletteGenerator = ({
     const a = s * Math.min(l, 1 - l);
     const f = (n: number) =>
       l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-    
+
     const toHex = (x: number) => {
       const hex = Math.round(x * 255).toString(16);
-      return hex.length === 1 ? '0' + hex : hex;
+      return hex.length === 1 ? "0" + hex : hex;
     };
-    
+
     return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}`;
   };
 
@@ -266,11 +274,13 @@ export const ColorPaletteGenerator = ({
 
     // Generate lighter shades
     for (let i = 1; i <= 5; i++) {
-      variations.push(HSLToHex(
-        hsl.h,
-        Math.max(0, Math.min(100, hsl.s - i * 5)),
-        Math.min(100, hsl.l + i * 5)
-      ));
+      variations.push(
+        HSLToHex(
+          hsl.h,
+          Math.max(0, Math.min(100, hsl.s - i * 5)),
+          Math.min(100, hsl.l + i * 5)
+        )
+      );
     }
 
     // Add base color
@@ -278,11 +288,13 @@ export const ColorPaletteGenerator = ({
 
     // Generate darker shades
     for (let i = 1; i <= 5; i++) {
-      variations.push(HSLToHex(
-        hsl.h,
-        Math.min(100, hsl.s + i * 5),
-        Math.max(0, hsl.l - i * 5)
-      ));
+      variations.push(
+        HSLToHex(
+          hsl.h,
+          Math.min(100, hsl.s + i * 5),
+          Math.max(0, hsl.l - i * 5)
+        )
+      );
     }
 
     return variations;
@@ -291,10 +303,7 @@ export const ColorPaletteGenerator = ({
   // Generate complementary colors
   const generateComplementaryColors = (hex: string) => {
     const hsl = hexToHSL(hex);
-    return [
-      hex,
-      HSLToHex((hsl.h + 180) % 360, hsl.s, hsl.l)
-    ];
+    return [hex, HSLToHex((hsl.h + 180) % 360, hsl.s, hsl.l)];
   };
 
   // Generate analogous colors
@@ -303,7 +312,7 @@ export const ColorPaletteGenerator = ({
     return [
       HSLToHex((hsl.h - 30 + 360) % 360, hsl.s, hsl.l),
       hex,
-      HSLToHex((hsl.h + 30) % 360, hsl.s, hsl.l)
+      HSLToHex((hsl.h + 30) % 360, hsl.s, hsl.l),
     ];
   };
 
@@ -313,7 +322,7 @@ export const ColorPaletteGenerator = ({
     return [
       hex,
       HSLToHex((hsl.h + 120) % 360, hsl.s, hsl.l),
-      HSLToHex((hsl.h + 240) % 360, hsl.s, hsl.l)
+      HSLToHex((hsl.h + 240) % 360, hsl.s, hsl.l),
     ];
   };
 
@@ -322,12 +331,26 @@ export const ColorPaletteGenerator = ({
   const analogous = generateAnalogousColors(primaryColor);
   const triadic = generateTriadicColors(primaryColor);
 
-  const ColorSwatch = ({ color, size = 'medium', label = '' }: { color: string; size?: 'small' | 'medium' | 'large'; label?: string }) => (
+  const ColorSwatch = ({
+    color,
+    size = "medium",
+    label = "",
+  }: {
+    color: string;
+    size?: "small" | "medium" | "large";
+    label?: string;
+  }) => (
     <div className="group relative">
-      <div 
+      <div
         className={`
           rounded-md shadow-sm transition-transform duration-300 hover:scale-105 cursor-pointer
-          ${size === 'small' ? 'w-8 h-8' : size === 'medium' ? 'w-12 h-12' : 'w-16 h-16'}
+          ${
+            size === "small"
+              ? "w-8 h-8"
+              : size === "medium"
+              ? "w-12 h-12"
+              : "w-16 h-16"
+          }
         `}
         style={{ backgroundColor: color }}
         onClick={() => handleCopy(color, color)}
@@ -444,14 +467,22 @@ export const ColorPaletteGenerator = ({
 
       {/* Main Color with Variations */}
       <div className="space-y-3">
-        <h5 className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">Color Scale</h5>
+        <h5 className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">
+          Color Scale
+        </h5>
         <div className="flex items-center gap-1">
           {variations.map((color, index) => (
-            <ColorSwatch 
-              key={index} 
+            <ColorSwatch
+              key={index}
               color={color}
               size="medium"
-              label={index === 5 ? 'Base' : index < 5 ? `Lighter ${5-index}` : `Darker ${index-5}`}
+              label={
+                index === 5
+                  ? "Base"
+                  : index < 5
+                  ? `Lighter ${5 - index}`
+                  : `Darker ${index - 5}`
+              }
             />
           ))}
         </div>
@@ -460,42 +491,50 @@ export const ColorPaletteGenerator = ({
       {/* Color Harmonies */}
       <div className="space-y-6">
         <div className="space-y-3">
-          <h5 className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">Complementary</h5>
+          <h5 className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">
+            Complementary
+          </h5>
           <div className="flex items-center gap-2">
             {complementary.map((color, index) => (
-              <ColorSwatch 
-                key={index} 
+              <ColorSwatch
+                key={index}
                 color={color}
                 size="large"
-                label={index === 0 ? 'Primary' : 'Complementary'}
+                label={index === 0 ? "Primary" : "Complementary"}
               />
             ))}
           </div>
         </div>
 
         <div className="space-y-3">
-          <h5 className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">Analogous</h5>
+          <h5 className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">
+            Analogous
+          </h5>
           <div className="flex items-center gap-2">
             {analogous.map((color, index) => (
-              <ColorSwatch 
-                key={index} 
+              <ColorSwatch
+                key={index}
                 color={color}
                 size="large"
-                label={index === 1 ? 'Primary' : index === 0 ? '-30°' : '+30°'}
+                label={index === 1 ? "Primary" : index === 0 ? "-30°" : "+30°"}
               />
             ))}
           </div>
         </div>
 
         <div className="space-y-3">
-          <h5 className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">Triadic</h5>
+          <h5 className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">
+            Triadic
+          </h5>
           <div className="flex items-center gap-2">
             {triadic.map((color, index) => (
-              <ColorSwatch 
-                key={index} 
+              <ColorSwatch
+                key={index}
                 color={color}
                 size="large"
-                label={index === 0 ? 'Primary' : index === 1 ? '+120°' : '+240°'}
+                label={
+                  index === 0 ? "Primary" : index === 1 ? "+120°" : "+240°"
+                }
               />
             ))}
           </div>
@@ -504,40 +543,63 @@ export const ColorPaletteGenerator = ({
 
       {/* Color Applications */}
       <div className="space-y-3">
-        <h5 className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">Color Applications</h5>
+        <h5 className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">
+          Color Applications
+        </h5>
         <div className="grid grid-cols-2 gap-3">
           {/* Text Combinations */}
           <div className="space-y-2 p-4 rounded-lg border border-gray-200">
-            <div className="text-[11px] text-gray-500 uppercase tracking-wider font-medium">Text</div>
-            <div style={{ color: primaryColor }} className="font-medium">Primary Text</div>
-            <div style={{ color: variations[2] }} className="font-medium">Secondary Text</div>
-            <div style={{ color: variations[3] }} className="font-medium">Tertiary Text</div>
+            <div className="text-[11px] text-gray-500 uppercase tracking-wider font-medium">
+              Text
+            </div>
+            <div style={{ color: primaryColor }} className="font-medium">
+              Primary Text
+            </div>
+            <div style={{ color: variations[2] }} className="font-medium">
+              Secondary Text
+            </div>
+            <div style={{ color: variations[3] }} className="font-medium">
+              Tertiary Text
+            </div>
           </div>
 
           {/* Background Combinations */}
           <div className="space-y-2 p-4 rounded-lg border border-gray-200">
-            <div className="text-[11px] text-gray-500 uppercase tracking-wider font-medium">Backgrounds</div>
+            <div className="text-[11px] text-gray-500 uppercase tracking-wider font-medium">
+              Backgrounds
+            </div>
             <div className="space-y-1">
-              <div style={{ backgroundColor: variations[0] }} className="h-6 rounded" />
-              <div style={{ backgroundColor: variations[1] }} className="h-6 rounded" />
-              <div style={{ backgroundColor: variations[2] }} className="h-6 rounded" />
+              <div
+                style={{ backgroundColor: variations[0] }}
+                className="h-6 rounded"
+              />
+              <div
+                style={{ backgroundColor: variations[1] }}
+                className="h-6 rounded"
+              />
+              <div
+                style={{ backgroundColor: variations[2] }}
+                className="h-6 rounded"
+              />
             </div>
           </div>
 
           {/* Gradient Examples */}
           <div className="space-y-2 p-4 rounded-lg border border-gray-200">
-            <div className="text-[11px] text-gray-500 uppercase tracking-wider font-medium">Gradients</div>
+            <div className="text-[11px] text-gray-500 uppercase tracking-wider font-medium">
+              Gradients
+            </div>
             <div className="space-y-1">
-              <div 
+              <div
                 className="h-8 rounded"
-                style={{ 
-                  background: `linear-gradient(to right, ${primaryColor}, ${complementary[1]})` 
+                style={{
+                  background: `linear-gradient(to right, ${primaryColor}, ${complementary[1]})`,
                 }}
               />
-              <div 
+              <div
                 className="h-8 rounded"
-                style={{ 
-                  background: `linear-gradient(to right, ${variations[1]}, ${variations[8]})` 
+                style={{
+                  background: `linear-gradient(to right, ${variations[1]}, ${variations[8]})`,
                 }}
               />
             </div>
@@ -545,12 +607,26 @@ export const ColorPaletteGenerator = ({
 
           {/* Accent Colors */}
           <div className="space-y-2 p-4 rounded-lg border border-gray-200">
-            <div className="text-[11px] text-gray-500 uppercase tracking-wider font-medium">Accents</div>
+            <div className="text-[11px] text-gray-500 uppercase tracking-wider font-medium">
+              Accents
+            </div>
             <div className="flex gap-1">
-              <div style={{ backgroundColor: analogous[0] }} className="w-8 h-8 rounded" />
-              <div style={{ backgroundColor: primaryColor }} className="w-8 h-8 rounded" />
-              <div style={{ backgroundColor: analogous[2] }} className="w-8 h-8 rounded" />
-              <div style={{ backgroundColor: complementary[1] }} className="w-8 h-8 rounded" />
+              <div
+                style={{ backgroundColor: analogous[0] }}
+                className="w-8 h-8 rounded"
+              />
+              <div
+                style={{ backgroundColor: primaryColor }}
+                className="w-8 h-8 rounded"
+              />
+              <div
+                style={{ backgroundColor: analogous[2] }}
+                className="w-8 h-8 rounded"
+              />
+              <div
+                style={{ backgroundColor: complementary[1] }}
+                className="w-8 h-8 rounded"
+              />
             </div>
           </div>
         </div>
