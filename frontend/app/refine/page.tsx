@@ -57,10 +57,10 @@ export default function RefinePage() {
   const [fontLinks, setFontLinks] = useState<string[]>([]);
   const [logos, setLogos] = useState<{
     anthropicLogo: string | null;
-    mistralLogo: string | null;
+    mistralLogos: string[];
   }>({
     anthropicLogo: null,
-    mistralLogo: null,
+    mistralLogos: [],
   });
   const [showResults, setShowResults] = useState(false);
 
@@ -350,7 +350,7 @@ export default function RefinePage() {
                 console.log("Received logo response:", logoResult);
                 setLogos({
                   anthropicLogo: logoResult.anthropicLogo,
-                  mistralLogo: logoResult.mistralLogo,
+                  mistralLogos: logoResult.mistralLogos,
                 });
                 setShowResults(true);
               } catch (error) {
@@ -497,7 +497,7 @@ export default function RefinePage() {
       console.log("Logo API Response:", logoData);
       setLogos({
         anthropicLogo: logoData.anthropicLogo,
-        mistralLogo: logoData.mistralLogo,
+        mistralLogos: logoData.mistralLogos,
       });
       setShowResults(true);
     } catch (error) {
@@ -600,7 +600,7 @@ export default function RefinePage() {
       console.log("Logo API Response:", logoData);
       setLogos({
         anthropicLogo: logoData.anthropicLogo,
-        mistralLogo: logoData.mistralLogo,
+        mistralLogos: logoData.mistralLogos,
       });
     } catch (error) {
       console.error("Error during regeneration:", error);

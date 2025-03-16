@@ -15,6 +15,8 @@ const mistral = new Mistral({
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    console.log("Starting logo generation with body:", body);
+
     const {
       companyName,
       productType,
@@ -24,16 +26,6 @@ export async function POST(request: Request) {
       selectedFont,
       selectedColor,
     } = body;
-
-    console.log("Logo API Input:", {
-      companyName,
-      productType,
-      companyProfile,
-      productValues,
-      customers,
-      selectedFont,
-      selectedColor,
-    });
 
     const logoPrompt = `Create a minimal logo for a company with the following details:
       Company Name: ${companyName}
@@ -46,61 +38,93 @@ export async function POST(request: Request) {
 
       The logo should be simple, memorable, and reflect the company's identity.`;
 
-    console.log("Logo Generation Prompt:", logoPrompt);
+    console.log("Starting parallel logo generation...");
 
-    // Make both API calls in parallel for better performance
-    const [anthropicResponse, mistralResponse] = await Promise.all([
-      anthropic.messages.create({
-        model: process.env.ANTHROPIC_MODEL_LOGO,
-        max_tokens: 500,
-        temperature: 1,
-        system:
-          "you are a vector logo designer that creates simple and minimal logos and designs based on the user's business.\n\n- do not use paths\n- do not use polygons\n- do not try to make art\n- focus on typography\n- only respond with the <text></text>\n- experiment with the text rendering for unique designs",
-        messages: [
-          {
-            role: "user",
-            content: [
-              {
-                type: "text",
-                text: `${logoPrompt}, please reflect on your design as you write it to ensure its accuracy in design.\n\n\nYou follow these rules:\n- always start with <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"512\" height=\"512\" viewBox=\"0 0 512 512\">\n- if you use text you never use paths to create the text you use a <text></text> element and you only write one line of text like \"Apple\", no taglines.\n- logos are always centered and take up 90% of the viewport\n- follow good simple design processes\n- you only respond with the SVG code\n- you never use code blocks\n- I don't want vector paths or polygons, only text\n- you leave the backgrounds transparent\n- you will only output <text></text> elements in the SVG and nothing else.`,
-              },
-            ],
-          },
-        ],
-      }),
-      mistral.agents.complete({
-        agentId: process.env.MISTRAL_AGENT_MODEL,
-        messages: [
-          {
-            role: "user",
-            content: logoPrompt,
-          },
-        ],
-      }),
+    // Create array of promises for Mistral variations
+    const mistralPromises = Array.from({ length: 3 }, (_, i) =>
+      mistral.agents
+        .complete({
+          agentId: process.env.MISTRAL_AGENT_MODEL,
+          messages: [
+            {
+              role: "user",
+              content: `${logoPrompt}\n\nThis is variation ${
+                i + 1
+              } of 3. Make it unique from other variations.`,
+            },
+          ],
+        })
+        .catch((error) => {
+          console.error(`Error in Mistral variation ${i + 1}:`, error);
+          return null;
+        })
+    );
+
+    // Generate all logos in parallel
+    const [anthropicResponse, ...mistralResponses] = await Promise.all([
+      // Anthropic logo
+      anthropic.messages
+        .create({
+          model: process.env.ANTHROPIC_MODEL_LOGO,
+          max_tokens: 500,
+          temperature: 1,
+          system:
+            "you are a vector logo designer that creates simple and minimal logos and designs based on the user's business.\n\n- do not use paths\n- do not use polygons\n- do not try to make art\n- focus on typography\n- only respond with the <text></text>\n- experiment with the text rendering for unique designs",
+          messages: [
+            {
+              role: "user",
+              content: [{ type: "text", text: logoPrompt }],
+            },
+          ],
+        })
+        .catch((error) => {
+          console.error("Error in Anthropic generation:", error);
+          return null;
+        }),
+
+      // Add Mistral promises
+      ...mistralPromises,
     ]);
 
-    // Extract the SVG code from the Anthropic response
-    const anthropicSvg = Array.isArray(anthropicResponse.content)
-      ? anthropicResponse.content
-          .filter((block) => block.type === "text")
-          .map((block) => (block.type === "text" ? block.text : ""))
-          .join("")
-      : "";
+    console.log("All API calls completed");
 
-    // Extract the SVG code from Mistral response
-    const mistralSvg = mistralResponse.choices[0].message.content;
+    // Process Anthropic response
+    const anthropicSvg =
+      anthropicResponse && Array.isArray(anthropicResponse.content)
+        ? anthropicResponse.content
+            .filter((block) => block.type === "text")
+            .map((block) => (block.type === "text" ? block.text : ""))
+            .join("")
+        : "";
 
-    console.log("Generated Anthropic SVG Code:", anthropicSvg);
-    console.log("Generated Mistral SVG Code:", mistralSvg);
+    console.log("Anthropic SVG:", anthropicSvg);
+
+    // Process Mistral responses
+    const mistralLogos = mistralResponses
+      .filter((response) => response !== null)
+      .map((response) => response.choices[0].message.content);
+
+    console.log("Mistral Logos:", mistralLogos);
+    mistralLogos.forEach((logo, index) => {
+      console.log(`Mistral Logo ${index + 1}:`, logo);
+    });
+
+    console.log(`Successfully generated ${mistralLogos.length} Mistral logos`);
 
     return NextResponse.json({
       anthropicLogo: anthropicSvg,
-      mistralLogo: mistralSvg,
+      mistralLogos: mistralLogos,
     });
   } catch (error) {
-    console.error("Error in logo generation API:", error);
+    console.error("Fatal error in logo generation API:", error);
+
     return NextResponse.json(
-      { error: "Failed to generate logo" },
+      {
+        error: "Failed to generate logo",
+        details: error.message,
+        anthropicLogo: null,
+        mistralLogos: [],
+      },
       { status: 500 }
     );
   }

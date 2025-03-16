@@ -21,8 +21,8 @@ interface BrandResultsProps {
     option3: string;
   };
   logos: {
-    mistralLogo: string | null;
     anthropicLogo: string | null;
+    mistralLogos: string[];
   };
   onRegenerate: () => void;
   isLoading: boolean;
@@ -643,229 +643,47 @@ export function BrandResults({
             </div>
           </motion.div>
 
+          <div className="space-y-6">
+            <h3 className="text-2xl font-bold">Logo Options</h3>
+            <div className="flex gap-6 overflow-x-auto pb-4">
+              {/* Text Design */}
+              {logos.anthropicLogo && (
+                <div className="p-6 border-2 border-gray-200 rounded-xl min-w-[400px] w-[400px]">
+                  <h4 className="text-lg font-semibold mb-4">Text Design</h4>
+                  <div
+                    className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center p-4"
+                    dangerouslySetInnerHTML={{
+                      __html: logos.anthropicLogo.includes("<svg")
+                        ? logos.anthropicLogo
+                        : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">${logos.anthropicLogo}</svg>`,
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* Logo Designs */}
+              {logos.mistralLogos.map((logo, index) => (
+                <div
+                  key={index}
+                  className="p-6 border-2 border-gray-200 rounded-xl min-w-[300px] w-[300px]"
+                >
+                  <h4 className="text-lg font-semibold mb-4">
+                    Logo Design {index + 1}
+                  </h4>
+                  <div
+                    className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center p-4"
+                    dangerouslySetInnerHTML={{
+                      __html: logo.includes("<svg")
+                        ? logo
+                        : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">${logo}</svg>`,
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div className="grid grid-cols-12 gap-6">
-            {/* Mistral Logo Section */}
-            <motion.div
-              variants={item}
-              className="col-span-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
-            >
-              <div className="border-b border-gray-100 px-5 py-3.5">
-                <div className="flex items-center gap-3">
-                  <div className="w-7 h-7 rounded-md bg-[#C60F7B]/10 flex items-center justify-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#C60F7B"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-[15px] font-medium text-gray-900">
-                      Logo Design
-                    </h3>
-                    <p className="text-[13px] text-gray-500">
-                      Preview and download your logo design
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="p-6">
-                <div className="flex flex-col items-center justify-center space-y-5">
-                  <div className="w-full bg-[#fafafa] rounded-lg p-4 border border-gray-100 overflow-hidden group hover:border-[#C60F7B] transition-all duration-300">
-                    <div
-                      className="flex justify-center items-center bg-white rounded-lg"
-                      style={{ height: "400px" }}
-                    >
-                      {logos.mistralLogo && (
-                        <img
-                          src={createSvgDataUrl(logos.mistralLogo)}
-                          alt="Mistral Logo Preview"
-                          style={{
-                            maxWidth: "300px",
-                            maxHeight: "400px",
-                            objectFit: "contain",
-                          }}
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex gap-3 w-full">
-                    <button
-                      onClick={() => {
-                        const blob = new Blob([logos.mistralLogo || ""], {
-                          type: "image/svg+xml",
-                        });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = url;
-                        a.download = `${companyName.toLowerCase()}-mistral-logo.svg`;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                      }}
-                      className="flex-1 px-4 py-2 bg-[#C60F7B] rounded-md text-white hover:bg-[#A00C63] transition-all duration-300 hover:scale-[1.02] hover:shadow-md shadow-sm flex items-center justify-center gap-2 group text-[13px] font-medium"
-                    >
-                      <FiDownload className="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform duration-300" />
-                      Download SVG
-                    </button>
-                    <button
-                      className="flex-1 px-4 py-2 bg-white border border-gray-200 rounded-md hover:border-[#C60F7B] transition-all duration-300 hover:scale-[1.02] hover:shadow-md shadow-sm flex items-center justify-center gap-2 group text-[13px] font-medium"
-                      onClick={() => {
-                        if (!logos.mistralLogo) return;
-                        const svgBlob = new Blob([logos.mistralLogo], {
-                          type: "image/svg+xml",
-                        });
-                        const url = URL.createObjectURL(svgBlob);
-                        const img = new Image();
-                        img.onload = () => {
-                          const canvas = document.createElement("canvas");
-                          canvas.width = img.width;
-                          canvas.height = img.height;
-                          const ctx = canvas.getContext("2d");
-                          ctx?.drawImage(img, 0, 0);
-                          canvas.toBlob((pngBlob) => {
-                            if (pngBlob) {
-                              const pngUrl = URL.createObjectURL(pngBlob);
-                              const a = document.createElement("a");
-                              a.href = pngUrl;
-                              a.download = `${companyName.toLowerCase()}-mistral-logo.png`;
-                              document.body.appendChild(a);
-                              a.click();
-                              document.body.removeChild(a);
-                              URL.revokeObjectURL(pngUrl);
-                            }
-                          }, "image/png");
-                        };
-                        img.src = url;
-                      }}
-                    >
-                      <FiDownload className="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform duration-300" />
-                      Download PNG
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Anthropic Logo Section */}
-            <motion.div
-              variants={item}
-              className="col-span-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
-            >
-              <div className="border-b border-gray-100 px-5 py-3.5">
-                <div className="flex items-center gap-3">
-                  <div className="w-7 h-7 rounded-md bg-[#C60F7B]/10 flex items-center justify-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#C60F7B"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-[15px] font-medium text-gray-900">
-                      Logo Text Design
-                    </h3>
-                    <p className="text-[13px] text-gray-500">
-                      Preview and download your logo text design
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="p-6">
-                <div className="flex flex-col items-center justify-center space-y-5">
-                  <div className="w-full bg-[#fafafa] rounded-lg p-4 border border-gray-100 overflow-hidden group hover:border-[#C60F7B] transition-all duration-300">
-                    <div
-                      className="flex justify-center items-center bg-white rounded-lg"
-                      style={{ height: "400px" }}
-                    >
-                      {logos.anthropicLogo && (
-                        <img
-                          src={createSvgDataUrl(logos.anthropicLogo)}
-                          alt="Anthropic Logo Preview"
-                          style={{
-                            maxWidth: "300px",
-                            maxHeight: "400px",
-                            objectFit: "contain",
-                          }}
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex gap-3 w-full">
-                    <button
-                      onClick={() => {
-                        const blob = new Blob([logos.anthropicLogo || ""], {
-                          type: "image/svg+xml",
-                        });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = url;
-                        a.download = `${companyName.toLowerCase()}-anthropic-logo.svg`;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                      }}
-                      className="flex-1 px-4 py-2 bg-[#C60F7B] rounded-md text-white hover:bg-[#A00C63] transition-all duration-300 hover:scale-[1.02] hover:shadow-md shadow-sm flex items-center justify-center gap-2 group text-[13px] font-medium"
-                    >
-                      <FiDownload className="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform duration-300" />
-                      Download SVG
-                    </button>
-                    <button
-                      className="flex-1 px-4 py-2 bg-white border border-gray-200 rounded-md hover:border-[#C60F7B] transition-all duration-300 hover:scale-[1.02] hover:shadow-md shadow-sm flex items-center justify-center gap-2 group text-[13px] font-medium"
-                      onClick={() => {
-                        if (!logos.anthropicLogo) return;
-                        const svgBlob = new Blob([logos.anthropicLogo], {
-                          type: "image/svg+xml",
-                        });
-                        const url = URL.createObjectURL(svgBlob);
-                        const img = new Image();
-                        img.onload = () => {
-                          const canvas = document.createElement("canvas");
-                          canvas.width = img.width;
-                          canvas.height = img.height;
-                          const ctx = canvas.getContext("2d");
-                          ctx?.drawImage(img, 0, 0);
-                          canvas.toBlob((pngBlob) => {
-                            if (pngBlob) {
-                              const pngUrl = URL.createObjectURL(pngBlob);
-                              const a = document.createElement("a");
-                              a.href = pngUrl;
-                              a.download = `${companyName.toLowerCase()}-anthropic-logo.png`;
-                              document.body.appendChild(a);
-                              a.click();
-                              document.body.removeChild(a);
-                              URL.revokeObjectURL(pngUrl);
-                            }
-                          }, "image/png");
-                        };
-                        img.src = url;
-                      }}
-                    >
-                      <FiDownload className="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform duration-300" />
-                      Download PNG
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
             {/* Brand Preview and Customize Your Brand sections in a row */}
             <div className="col-span-8">
               {/* Brand Preview */}
