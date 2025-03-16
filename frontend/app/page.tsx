@@ -53,7 +53,14 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center bg-white text-black">
       {/* Logo */}
-      <div className="fixed top-6 left-12 z-50">
+      <div className="fixed top-6 left-12 z-50 flex items-center -space-x-1">
+        <Image
+          src="/logo-vector.svg"
+          alt="Fudeno Icon"
+          width={40}
+          height={40}
+          className="hover:scale-105 transition-transform duration-300"
+        />
         <Image
           src="/logo.svg"
           alt="Fudeno Logo"
@@ -70,7 +77,6 @@ export default function Home() {
           <h1 className="text-6xl md:text-[5.5rem] font-bold mb-8 tracking-tight">
             Create a brand for your
             <br />
-            
             <span className="inline-block min-w-[400px] text-indigo-600 transition-all duration-500">
               {words[currentWord]}
             </span>
@@ -99,7 +105,7 @@ export default function Home() {
                 strokeLinejoin="round"
                 className="transition-transform group-hover:translate-x-1"
               >
-                <path d="M5 12h14m-6-6 6 6-6 6"/>
+                <path d="M5 12h14m-6-6 6 6-6 6" />
               </svg>
             </button>
           </div>
@@ -127,7 +133,10 @@ export default function Home() {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-12 items-center justify-items-center">
             {companies.map((company, index) => (
-              <div key={index} className="flex items-center justify-center w-full">
+              <div
+                key={index}
+                className="flex items-center justify-center w-full"
+              >
                 <div className="w-full aspect-square bg-white rounded-2xl flex items-center justify-center border border-gray-100 hover:border-gray-200 transition-all duration-300 hover:shadow-lg p-6 group">
                   <span className="text-base font-medium text-gray-600 group-hover:text-gray-800 transition-colors">
                     {company.name}
