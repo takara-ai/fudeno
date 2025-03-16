@@ -233,13 +233,13 @@ export default function RefinePage() {
               <button
                 type="button"
                 onClick={() => {
-                  if (
-                    customValue &&
+    if (
+      customValue &&
                     !allValues.includes(customValue) &&
                     value.length < 5
-                  ) {
+    ) {
                     onChange([...value, customValue]);
-                    setCustomValue("");
+      setCustomValue("");
                   }
                 }}
                 disabled={
@@ -659,15 +659,15 @@ export default function RefinePage() {
         {/* Logo */}
         <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
           <div className="container mx-auto px-4 py-4 flex items-center">
-            <Image
-              src="/logo.svg"
-              alt="Fudeno Logo"
-              width={160}
-              height={50}
-              className="hover:scale-105 transition-transform duration-300"
-            />
-          </div>
+          <Image
+            src="/logo.svg"
+            alt="Fudeno Logo"
+            width={160}
+            height={50}
+            className="hover:scale-105 transition-transform duration-300"
+          />
         </div>
+              </div>
 
         <div className="w-full mt-32 px-8">
           {/* Progress bar */}
@@ -677,8 +677,8 @@ export default function RefinePage() {
               style={{
                 width: `${((currentStep + 1) / questions.length) * 100}%`,
               }}
-            />
-          </div>
+                />
+              </div>
 
           {!showResults ? (
             <div className="space-y-8">
@@ -692,7 +692,7 @@ export default function RefinePage() {
                 onNext: handleNext,
                 onBack: handleBack,
               })}
-            </div>
+              </div>
           ) : (
             <BrandResults
               companyName={companyName}

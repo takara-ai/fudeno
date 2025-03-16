@@ -1647,38 +1647,18 @@ export function BrandResults({
                   </svg>
                   Export Corporate Design PDF
                 </button>
-                <button
-                  onClick={generatePPTX}
-                  className="px-4 py-2 bg-white border border-gray-200 rounded-md hover:border-[#C60F7B] transition-all duration-300 hover:scale-[1.02] hover:shadow-md shadow-sm flex items-center gap-2 group text-[13px] font-medium"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="group-hover:translate-y-0.5 transition-transform duration-300"
-                  >
-                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
-                    <polyline points="13 2 13 9 20 9"></polyline>
-                  </svg>
-                  Export Branded PPTX Template
-                </button>
-                <button
-                  onClick={onRegenerate}
-                  disabled={isLoading}
+            
+        <button
+          onClick={onRegenerate}
+          disabled={isLoading}
                   className="px-4 py-2 bg-[#C60F7B] rounded-md text-white hover:bg-[#A00C63] transition-all duration-300 hover:scale-[1.02] hover:shadow-md shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-[13px] font-medium"
-                >
+        >
                   <FiRefreshCw
                     className={`${isLoading ? "animate-spin" : ""} w-3.5 h-3.5`}
                   />
-                  {isLoading ? "Generating..." : "Generate New Options"}
-                </button>
-              </div>
+          {isLoading ? "Generating..." : "Generate New Options"}
+        </button>
+      </div>
             </div>
           </motion.div>
 
@@ -2017,7 +1997,7 @@ export function BrandResults({
 
             {/* Customize Your Brand section */}
             <div className="col-span-4">
-              {/* Font Options */}
+          {/* Font Options */}
               <motion.div
                 variants={item}
                 className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
@@ -2058,32 +2038,32 @@ export function BrandResults({
                   </div>
                 </div>
                 <div className="p-5">
-                  <div className="space-y-6">
+            <div className="space-y-6">
                     {/* Font Selection */}
                     <div>
                       <h4 className="text-[13px] font-medium text-gray-900 mb-3">
                         Font Options
                       </h4>
                       <div className="space-y-2">
-                        {Object.entries(fontSuggestions).map(([key, font]) => (
-                          <div
-                            key={key}
+              {Object.entries(fontSuggestions).map(([key, font]) => (
+                <div
+                  key={key}
                             onClick={() => setSelectedFont(key)}
                             className={`p-3 rounded-md border cursor-pointer transition-all duration-300 transform hover:scale-[1.01] ${
                               key === selectedFont
                                 ? "border-[#C60F7B] bg-[#C60F7B]/5"
                                 : "border-gray-200 hover:border-[#C60F7B]"
-                            }`}
-                          >
-                            <div className="flex items-center justify-between mb-2">
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
                               <h4 className="text-[13px] font-medium text-gray-900 flex items-center gap-2">
-                                Option {key.slice(-1)}
+                      Option {key.slice(-1)}
                                 {key === selectedFont && (
                                   <span className="text-[11px] text-[#C60F7B]">
                                     (Selected)
-                                  </span>
-                                )}
-                              </h4>
+                        </span>
+                      )}
+                    </h4>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -2098,25 +2078,25 @@ export function BrandResults({
                                   </span>
                                 )}
                               </button>
-                            </div>
+                  </div>
                             <p className="text-[11px] text-gray-500 mb-1.5">
                               {font}
                             </p>
-                            <div
+                  <div
                               className="text-[15px] text-gray-900 transition-all duration-300"
-                              style={{
-                                fontFamily: `'${font}', sans-serif`,
-                                opacity: document.fonts?.check(`12px '${font}'`)
-                                  ? 1
-                                  : 0.5,
-                              }}
-                            >
-                              {FONT_SHOWCASE_TEXT}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    style={{
+                      fontFamily: `'${font}', sans-serif`,
+                      opacity: document.fonts?.check(`12px '${font}'`)
+                        ? 1
+                        : 0.5,
+                    }}
+                  >
+                    {FONT_SHOWCASE_TEXT}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
                     {/* Color Selection */}
                     <div>
@@ -2124,25 +2104,25 @@ export function BrandResults({
                         Color Options
                       </h4>
                       <div className="space-y-2">
-                        {Object.entries(colors).map(([key, color]) => (
-                          <div
-                            key={key}
+              {Object.entries(colors).map(([key, color]) => (
+                <div
+                  key={key}
                             onClick={() => setSelectedColor(key)}
                             className={`p-3 rounded-md border cursor-pointer transition-all duration-300 transform hover:scale-[1.01] ${
                               key === selectedColor
                                 ? "border-[#C60F7B] bg-[#C60F7B]/5"
                                 : "border-gray-200 hover:border-[#C60F7B]"
-                            }`}
-                          >
-                            <div className="flex items-center justify-between mb-2">
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
                               <h4 className="text-[13px] font-medium text-gray-900 flex items-center gap-2">
-                                Option {key.slice(-1)}
+                      Option {key.slice(-1)}
                                 {key === selectedColor && (
                                   <span className="text-[11px] text-[#C60F7B]">
                                     (Selected)
-                                  </span>
-                                )}
-                              </h4>
+                        </span>
+                      )}
+                    </h4>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -2157,12 +2137,12 @@ export function BrandResults({
                                   </span>
                                 )}
                               </button>
-                            </div>
+                  </div>
                             <div className="flex items-center gap-3">
-                              <div
+                    <div
                                 className="w-14 h-14 rounded-md shadow-sm transition-transform duration-300 hover:scale-105 cursor-pointer"
-                                style={{ backgroundColor: `#${color}` }}
-                              />
+                      style={{ backgroundColor: `#${color}` }}
+                    />
                               <div className="space-y-1">
                                 <code className="text-[13px] font-mono text-gray-600">
                                   #{color}
@@ -2170,24 +2150,24 @@ export function BrandResults({
                                 <div className="flex flex-col gap-1">
                                   <div className="px-2 py-1 bg-gray-50 rounded text-[11px] text-gray-600">
                                     RGB: {hexToRgb(`#${color}`)}
-                                  </div>
+                    </div>
                                   <div className="px-2 py-1 bg-gray-50 rounded text-[11px] text-gray-600">
                                     HSL: {hexToHsl(`#${color}`)}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
                   </div>
                 </div>
-              </motion.div>
+            </div>
+          </div>
+              </div>
+                        ))}
             </div>
           </div>
         </div>
+            </div>
+              </motion.div>
+          </div>
+        </div>
       </div>
+    </div>
     </motion.div>
   );
 }
