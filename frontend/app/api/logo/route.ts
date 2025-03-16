@@ -70,7 +70,7 @@ export async function POST(request: Request) {
       }),
       anthropic.messages.create({
         model: process.env.ANTHROPIC_MODEL_LOGO,
-        max_tokens: 500,
+        max_tokens: 2000,
         temperature: 1,
         system:
           "You are a vector logo designer that creates simple and minimal logos using SVG paths. Create clean, professional designs.",
