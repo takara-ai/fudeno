@@ -1,6 +1,8 @@
+<img src="https://fudeno.pages.dev/logo.svg" width="200" alt="fudeno Logo" />
+
 # Fudeno - AI-Powered Corporate Design Generator
 
-<img src="https://fudeno.pages.dev/logo.svg" width="200" alt="fudeno Logo" />
+> 🎉 16/03/2025 We just won THIRD PLACE in the Tech:Europe AI Hackathon in Munich with Fudeno!! [Check it out the dataset here!](https://huggingface.co/datasets/takara-ai/fudeno-instruct-4M)
 
 ## Overview
 
