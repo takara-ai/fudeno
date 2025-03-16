@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     console.log("Logo Generation Prompt:", logoPrompt);
 
     // Make both API calls in parallel for better performance
-    const [anthropicResponse, mistralResponse] = await Promise.all([
+    const [anthropicTextLogo, anthropicVectorLogo] = await Promise.all([
       anthropic.messages.create({
         model: process.env.ANTHROPIC_MODEL_LOGO,
         max_tokens: 500,
@@ -68,34 +68,47 @@ export async function POST(request: Request) {
           },
         ],
       }),
-      mistral.agents.complete({
-        agentId: process.env.MISTRAL_AGENT_MODEL,
+      anthropic.messages.create({
+        model: process.env.ANTHROPIC_MODEL_LOGO,
+        max_tokens: 500,
+        temperature: 1,
+        system:
+          "You are a vector logo designer that creates simple and minimal logos using SVG paths. Create clean, professional designs.",
         messages: [
           {
             role: "user",
-            content: logoPrompt,
+            content: [
+              {
+                type: "text",
+                text: `${logoPrompt}\n\nRules:\n- Do not use text elements\n- Only return the SVG code\n- Use paths to create a minimal, iconic design\n- SVG should be 512x512 viewBox\n- Keep the design simple and memorable\n- Leave the background transparent`,
+              },
+            ],
           },
         ],
       }),
     ]);
 
-    // Extract the SVG code from the Anthropic response
-    const anthropicSvg = Array.isArray(anthropicResponse.content)
-      ? anthropicResponse.content
+    // Extract the SVG code from both Anthropic responses
+    const textLogoSvg = Array.isArray(anthropicTextLogo.content)
+      ? anthropicTextLogo.content
           .filter((block) => block.type === "text")
           .map((block) => (block.type === "text" ? block.text : ""))
           .join("")
       : "";
 
-    // Extract the SVG code from Mistral response
-    const mistralSvg = mistralResponse.choices[0].message.content;
+    const vectorLogoSvg = Array.isArray(anthropicVectorLogo.content)
+      ? anthropicVectorLogo.content
+          .filter((block) => block.type === "text")
+          .map((block) => (block.type === "text" ? block.text : ""))
+          .join("")
+      : "";
 
-    console.log("Generated Anthropic SVG Code:", anthropicSvg);
-    console.log("Generated Mistral SVG Code:", mistralSvg);
+    console.log("Generated Text Logo SVG Code:", textLogoSvg);
+    console.log("Generated Vector Logo SVG Code:", vectorLogoSvg);
 
     return NextResponse.json({
-      anthropicLogo: anthropicSvg,
-      mistralLogo: mistralSvg,
+      anthropicLogo: textLogoSvg,
+      mistralLogo: vectorLogoSvg, // keeping the same property name for compatibility
     });
   } catch (error) {
     console.error("Error in logo generation API:", error);
