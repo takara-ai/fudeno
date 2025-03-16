@@ -54,13 +54,13 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center bg-white text-black">
       {/* Logo */}
       <div className="fixed top-6 left-12 z-50 flex items-center -space-x-1">
-        <Image
+        {/* <Image
           src="/logo-vector.svg"
           alt="Fudeno Icon"
           width={40}
           height={40}
           className="hover:scale-105 transition-transform duration-300"
-        />
+        /> */}
         <Image
           src="/logo.svg"
           alt="Fudeno Logo"

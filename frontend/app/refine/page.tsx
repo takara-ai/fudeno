@@ -55,7 +55,13 @@ export default function RefinePage() {
   } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [fontLinks, setFontLinks] = useState<string[]>([]);
-  const [logo, setLogo] = useState<string | null>(null);
+  const [logos, setLogos] = useState<{
+    anthropicLogo: string | null;
+    mistralLogo: string | null;
+  }>({
+    anthropicLogo: null,
+    mistralLogo: null,
+  });
   const [showResults, setShowResults] = useState(false);
 
   const questions: Question[] = [
@@ -342,7 +348,10 @@ export default function RefinePage() {
 
                 const logoResult = await logoResponse.json();
                 console.log("Received logo response:", logoResult);
-                setLogo(logoResult.logo);
+                setLogos({
+                  anthropicLogo: logoResult.anthropicLogo,
+                  mistralLogo: logoResult.mistralLogo,
+                });
                 setShowResults(true);
               } catch (error) {
                 console.error("Error during generation:", error);
@@ -486,7 +495,10 @@ export default function RefinePage() {
 
       const logoData = await logoResponse.json();
       console.log("Logo API Response:", logoData);
-      setLogo(logoData.logo);
+      setLogos({
+        anthropicLogo: logoData.anthropicLogo,
+        mistralLogo: logoData.mistralLogo,
+      });
       setShowResults(true);
     } catch (error) {
       console.error("Error:", error);
@@ -586,7 +598,10 @@ export default function RefinePage() {
 
       const logoData = await logoResponse.json();
       console.log("Logo API Response:", logoData);
-      setLogo(logoData.logo);
+      setLogos({
+        anthropicLogo: logoData.anthropicLogo,
+        mistralLogo: logoData.mistralLogo,
+      });
     } catch (error) {
       console.error("Error during regeneration:", error);
     } finally {
@@ -681,7 +696,7 @@ export default function RefinePage() {
               companyName={companyName}
               fontSuggestions={fontSuggestions!}
               colors={colors!}
-              logo={logo!}
+              logos={logos}
               onRegenerate={handleRegenerate}
               isLoading={isLoading}
             />
