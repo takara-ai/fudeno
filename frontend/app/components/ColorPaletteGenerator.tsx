@@ -374,7 +374,7 @@ export const ColorPaletteGenerator = ({
 
   return (
     <div className="space-y-8">
-      <div className="bg-gray-800/30 p-6 rounded-xl border border-[#C60F7B]/20">
+      <div className="bg-gray-300/30 p-6 rounded-xl border border-[#C60F7B]/20">
         <h3 className="text-xl font-semibold mb-4">Color Palette Generator</h3>
 
         {/* Color Scheme Selection */}
@@ -411,7 +411,7 @@ export const ColorPaletteGenerator = ({
       </div>
 
       {/* Color Visualization */}
-      <div className="bg-gray-800/30 p-6 rounded-xl border border-[#C60F7B]/20">
+      <div className="bg-gray-300/30 p-6 rounded-xl border border-[#C60F7B]/20">
         <h3 className="text-xl font-semibold mb-4">Color Visualization</h3>
 
         {/* UI Elements Preview */}
@@ -491,7 +491,7 @@ export const ColorPaletteGenerator = ({
       {/* Color Harmonies */}
       <div className="space-y-6">
         <div className="space-y-3">
-          <h5 className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">
+          <h5 className="text-[11px] uppercase tracking-wider font-medium">
             Complementary
           </h5>
           <div className="flex items-center gap-2">
