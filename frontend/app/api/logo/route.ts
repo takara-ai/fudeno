@@ -80,7 +80,7 @@ export async function POST(request: Request) {
             content: [
               {
                 type: "text",
-                text: `${logoPrompt}\n\nRules:\n- Do not use text elements\n- Only return the SVG code\n- Use paths to create a minimal, iconic design\n- SVG should be 512x512 viewBox\n- Keep the design simple and memorable\n- Leave the background transparent`,
+                text: `${logoPrompt}\n\nRules:\n- Do not use text elements\n- Only return the SVG code\n- Use paths to create a minimal, iconic design\n- SVG should be 512x512 viewBox\n- Keep the design simple and memorable\n- Leave the background transparent\n- Do not overcomoplicate and rely on existing SVG design principles and few elements`,
               },
             ],
           },
