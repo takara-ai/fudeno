@@ -53,21 +53,16 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center bg-white text-black">
       {/* Logo */}
-      <div className="fixed top-6 left-12 z-50 flex items-center -space-x-1">
-        {/* <Image
-          src="/logo-vector.svg"
-          alt="Fudeno Icon"
-          width={40}
-          height={40}
-          className="hover:scale-105 transition-transform duration-300"
-        /> */}
-        <Image
-          src="/logo.svg"
-          alt="Fudeno Logo"
-          width={160}
-          height={50}
-          className="hover:scale-105 transition-transform duration-300"
-        />
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
+        <div className="container mx-auto px-12 py-6 flex items-center -space-x-1">
+          <Image
+            src="/logo.svg"
+            alt="Fudeno Logo"
+            width={160}
+            height={50}
+            className="hover:scale-105 transition-transform duration-300"
+          />
+        </div>
       </div>
 
       {/* Hero Section */}
