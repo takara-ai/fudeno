@@ -54,7 +54,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center bg-white text-black">
       {/* Logo */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
-        <div className="container mx-auto px-4 py-4 flex items-center">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-6">
           <Image
             src="/logo.svg"
             alt="Fudeno Logo"
@@ -66,7 +66,7 @@ export default function Home() {
       </div>
 
       {/* Hero Section */}
-      <div className="flex min-h-[70vh] items-center justify-between w-full max-w-7xl mx-auto px-4 pt-32">
+      <div className="flex min-h-[70vh] items-center justify-between w-full max-w-7xl mx-auto px-4 md:px-8 pt-32">
         {/* Left side content */}
         <div className="w-1/2 text-left">
           <h1 className="text-6xl md:text-[5.5rem] font-bold mb-8 tracking-tight">
@@ -119,6 +119,57 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Companies Section */}
+      <section className="w-full py-32 px-4 bg-gray-50 mt-32">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-semibold text-center mb-16">
+            Trusted by innovative teams worldwide
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-12 items-center justify-items-center">
+            {companies.map((company, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-center w-full"
+              >
+                <div className="w-full aspect-square bg-white rounded-2xl flex items-center justify-center border border-gray-100 hover:border-gray-200 transition-all duration-300 hover:shadow-lg p-6 group">
+                  <span className="text-base font-medium text-gray-600 group-hover:text-gray-800 transition-colors">
+                    {company.name}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="w-full py-20 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
+            What our users say
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <div
+                key={index}
+                className="bg-white p-8 rounded-2xl transition-all duration-300 border border-gray-100 hover:border-gray-200 hover:shadow-lg"
+              >
+                <div className="flex items-center mb-6">
+                  <div className="w-12 h-12 bg-gray-100 rounded-full mr-4"></div>
+                  <div>
+                    <h3 className="font-semibold text-lg">
+                      {testimonial.author}
+                    </h3>
+                    <p className="text-gray-600 text-sm">{testimonial.role}</p>
+                  </div>
+                </div>
+                <p className="text-gray-700">{testimonial.quote}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
