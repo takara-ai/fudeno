@@ -21,6 +21,51 @@ The platform consists of two main components:
    - Specialized in generating SVG vector logos
    - Trained on the takara-ai/fudeno-instruct-4M dataset
 
+## Dataset: Fudeno-Instruct-4M
+
+Our model is trained on Fudeno-Instruct-4M, the world's largest multimodal instruct dataset for SVG generation, containing over 4 million examples.
+
+### Dataset Composition
+
+The dataset combines two distinct sources:
+
+1. **High-Quality Curated SVGs (75%)**
+
+   - Sourced from MIT-licensed SVG repositories
+   - Professionally captioned using HuggingFaceTB/SmolVLM-Instruct and NLP
+   - Represents real-world, human-designed graphics
+   - Source ID: `takara-ai/multimodal-icon-instruct`
+
+2. **Random Generated SVGs (25%)**
+   - Generated using high-performance Golang scripts
+   - Systematic variation in complexity and styling
+   - Synthetic captions derived from SVG structure
+   - Source ID: `takara-ai/rand-1m-multimodal`
+
+### Data Format
+
+Each entry contains:
+
+- Natural language prompt describing the desired SVG
+- Complete SVG markup string
+- Rasterized PNG representation for validation
+
+### Dataset Splits
+
+- Training: 3.2M examples (80%)
+- Validation: 400K examples (10%)
+- Test: 400K examples (10%)
+
+### Technical Features
+
+The dataset covers a wide range of SVG capabilities:
+
+- Basic shapes and complex paths
+- Gradients and animations
+- Masks, clip paths, and filters
+- Responsive design elements
+- Accessibility features
+
 ## Quick Start
 
 ### Frontend Setup
