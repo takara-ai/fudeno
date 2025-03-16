@@ -931,8 +931,18 @@ export function BrandResults({
     const boxSpacing = 5;
     
     // Draw color scale
+    // Calculate total width needed for all color boxes
+    const totalWidth = colorVariations.length * (boxSize + boxSpacing) - boxSpacing;
+    
+    // Adjust background to fit all color boxes
+    doc.setFillColor(248, 248, 248);
+    doc.roundedRect(margin, yPosition - 10, pageWidth - (margin * 2), 80, 5, 5, "F");
+    
+    // Center the color boxes
+    const startX = (pageWidth - totalWidth) / 2;
+    
     colorVariations.forEach((color, index) => {
-      const xPos = margin + 15 + index * (boxSize + boxSpacing);
+      const xPos = startX + index * (boxSize + boxSpacing);
       
       // Add color box
       const hexColor = color.replace('#', '');
@@ -968,8 +978,69 @@ export function BrandResults({
         { align: "center" }
       );
     });
+
+    // Draw color scale with maximum 4 colors per row
+    // Split colors into rows of 4
+    const colorsPerRow = 4;
+    const numRows = Math.ceil(colorVariations.length / colorsPerRow);
     
-    yPosition += boxSize + 30;
+    // Adjust background height to accommodate multiple rows
+    doc.setFillColor(248, 248, 248);
+    doc.roundedRect(margin, yPosition - 10, pageWidth - (margin * 2), 40 + (numRows * (boxSize + 30)), 5, 5, "F");
+    
+    // Draw each row of colors
+    for (let row = 0; row < numRows; row++) {
+      // Get colors for this row
+      const rowColors = colorVariations.slice(row * colorsPerRow, Math.min((row + 1) * colorsPerRow, colorVariations.length));
+      
+      // Calculate width for this row
+      const rowWidth = rowColors.length * (boxSize + boxSpacing) - boxSpacing;
+      const rowStartX = (pageWidth - rowWidth) / 2;
+      
+      // Draw colors in this row
+      rowColors.forEach((color, colIndex) => {
+        const index = row * colorsPerRow + colIndex;
+        const xPos = rowStartX + colIndex * (boxSize + boxSpacing);
+        const yPos = yPosition + row * (boxSize + 30);
+        
+        // Add color box
+        const hexColor = color.replace('#', '');
+        doc.setFillColor(
+          parseInt(hexColor.substring(0, 2), 16),
+          parseInt(hexColor.substring(2, 4), 16),
+          parseInt(hexColor.substring(4, 6), 16)
+        );
+        doc.rect(xPos, yPos, boxSize, boxSize, "F");
+        
+        // Add border
+        doc.setDrawColor(220, 220, 220);
+        doc.setLineWidth(0.5);
+        doc.rect(xPos, yPos, boxSize, boxSize, "S");
+        
+        // Add label
+        doc.setTextColor(100, 100, 100);
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "normal");
+        let label = "";
+        if (index === 5) {
+          label = "Base";
+        } else if (index < 5) {
+          label = `Lighter ${5 - index}`;
+        } else {
+          label = `Darker ${index - 5}`;
+        }
+        
+        doc.text(
+          label,
+          xPos + boxSize/2,
+          yPos + boxSize + 10,
+          { align: "center" }
+        );
+      });
+    }
+    
+    // Update yPosition to account for all rows
+    yPosition += (numRows * (boxSize + 30)) + 10;
     
     // Add complementary colors section
     doc.setTextColor(80, 80, 80);

@@ -658,7 +658,7 @@ export default function RefinePage() {
       <main className="flex min-h-screen flex-col items-center bg-white text-black">
         {/* Logo */}
         <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
-          <div className="container mx-auto px-12 py-6 flex items-center -space-x-1">
+          <div className="container mx-auto px-4 py-4 flex items-center">
             <Image
               src="/logo.svg"
               alt="Fudeno Logo"
